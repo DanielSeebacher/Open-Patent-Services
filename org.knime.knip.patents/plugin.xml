@@ -2,15 +2,12 @@
 <?eclipse version="3.0"?>
 
 <plugin>
-     <extension point="org.knime.workbench.repository.nodes">
-        <node expert-flag="false" factory-class="org.knime.knip.javacv.nodes.testio.TestIONodeFactory" id="org.knime.knip.javacv.nodes.testio.TestIONodeFactory">
-        </node>
-     <node category-path="/" factory-class="org.knime.knip.javacv.nodes.features.surf.JavaCVSurfNodeFactory" id="org.knime.knip.javacv.nodes.features.surf.JavaCVSurfNodeFactory"/>
-	     <node category-path="/" factory-class="org.knime.knip.javacv.nodes.io.conversion.IplImageToPNGImageNodeFactory" id="org.knime.knip.javacv.nodes.io.conversion.IplImageToPNGImageNodeFactory"/>
-	     <node category-path="/" factory-class="org.knime.knip.javacv.nodes.io.conversion.PNGImageToIplImageNodeFactory" id="org.knime.knip.javacv.nodes.io.conversion.PNGImageToIplImageNodeFactory"/>
-</extension>
-     <extension point="org.knime.workbench.repository.categories">
-        <category description="JavaCV integration" icon="icons/missing.gif" level-id="javacv" name="JavaCV Integration" path="/community/knip">
-        </category>
-     </extension>
+   <extension
+         point="org.knime.workbench.repository.nodesets">
+      <nodeset
+            expert-flag="false"
+            factory-class="org.knime.knip.patents.features.FeaturesNodeSetFactory"
+            id="org.knime.knip.patents.features.FeaturesNodeSetFactory">
+      </nodeset>
+   </extension>
 </plugin>
