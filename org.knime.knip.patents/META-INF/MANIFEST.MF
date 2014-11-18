@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-SymbolicName: org.knime.knip.patents;singleton:=true
 Bundle-ManifestVersion: 2
-Bundle-Version: 0.5.0.qualifier
+Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: University of Konstanz
 Eclipse-RegisterBuddy: org.knime.core
 Require-Bundle: org.knime.base,
@@ -12,14 +12,6 @@ Require-Bundle: org.knime.base,
  org.knime.knip.base;bundle-version="[1.0.1,2.0.0)",
  org.knime.knip.core;bundle-version="[1.0.1,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: knip_javacv.jar,
- lib/artoolkitplus.jar,
- lib/ffmpeg.jar,
- lib/flycapture.jar,
- lib/javacpp.jar,
- lib/javacv.jar,
- lib/libdc1394.jar,
- lib/libfreenect.jar,
- lib/opencv.jar,
- lib/videoinput.jar
+Bundle-ClassPath: patents.jar
 Bundle-ActivationPolicy: lazy
+Export-Package: org.knime.knip.patents.features
