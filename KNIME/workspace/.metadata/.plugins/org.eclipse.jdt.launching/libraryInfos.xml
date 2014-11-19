@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<libraryInfos>
+<libraryInfo home="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre" version="1.7.0_60">
+<bootpath>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/resources.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/rt.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/sunrsasign.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/jsse.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/jce.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/charsets.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/jfr.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/ext"/>
+<entry path="/usr/java/packages/lib/ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/endorsed"/>
+</endorsedDirs>
+</libraryInfo>
+<libraryInfo home="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1" version="1.7.0_60">
+<bootpath>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/resources.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/rt.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/sunrsasign.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/jsse.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/jce.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/charsets.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/jfr.jar"/>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/ext"/>
+<entry path="/usr/java/packages/lib/ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="/home/seebacher/Applications/KNIME/eclipse_knime_2.10.1/jre/lib/endorsed"/>
+</endorsedDirs>
+</libraryInfo>
+</libraryInfos>

@@ -1,0 +1,31 @@
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : #############################################################
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : #                                                           #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : # Welcome to KNIME v2.10.1.0043836 (Build August 04, 2014)       #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : # Based on Eclipse, www.eclipse.org                         #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : # Uses: Java, GEF, Log4J                                    #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : #                                                           #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : #############################################################
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : #                                                           #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : # Copyrighty by KNIME GmbH, Konstanz, Germany               #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : # website: http://www.knime.org                             #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : # email: contact@knime.org                                  #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : #                                                           #
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : #############################################################
+2014-11-19 15:29:44,680 INFO  Worker-2 NodeLogger : # For more details see the KNIME log file:                  #
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # /home/seebacher/Documents/github-projects/master-project/KNIME/workspace/.metadata/knime/knime.log
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : #-----------------------------------------------------------#
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # logging date=Wed Nov 19 15:29:44 CET 2014
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # java.version=1.7.0_60
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # java.vm.version=24.60-b09
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # java.vendor=Oracle Corporation
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # os.name=Linux
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # os.arch=amd64
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # number of CPUs=8
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # assertions=off
+2014-11-19 15:29:44,681 INFO  Worker-2 NodeLogger : # host=workstation
+2014-11-19 15:29:44,730 INFO  Worker-2 NodeLogger : # username=seebacher
+2014-11-19 15:29:44,731 INFO  Worker-2 NodeLogger : # max mem=341MB
+2014-11-19 15:29:44,731 INFO  Worker-2 NodeLogger : # application=org.eclipse.ui.ide.workbench
+2014-11-19 15:29:44,781 INFO  Worker-2 NodeLogger : # ID=01-803c79d08a457ed9
+2014-11-19 15:29:44,781 INFO  Worker-2 NodeLogger : #############################################################
+2014-11-19 15:29:44,782 DEBUG Worker-2 OpenNLPTokenizerPool : Initializing tokenizer pool with 10 tokenizers.

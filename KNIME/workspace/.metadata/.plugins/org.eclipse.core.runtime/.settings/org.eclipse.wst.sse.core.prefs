@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+task-tag-projects-already-scanned=org.knime.knip.base,org.knime.knip.core,org.knime.knip.exampleplugin,org.knime.knip.feature,org.knime.knip.io,org.knime.knip.scifio,org.knime.knip.scijava,org.knime.knip.testing,org.knime.knip.testing.feature,org.knime.knip.tracking,org.knime.knip.update

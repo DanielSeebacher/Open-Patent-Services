@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<config key="file_list_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_stringarray"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="file_list">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="plane_selection_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_imagesubsetselecction"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="plane_selection">
+<entry key="num_selected_dims" type="xint" value="0"/>
+</config>
+<config key="xmlcolumns_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="xmlcolumns" type="xboolean" value="false"/>
+<config key="filename_column_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_string"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="filename_column" type="xstring" value="downloadurl"/>
+<config key="complete_path_rowkey_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="complete_path_rowkey" type="xboolean" value="false"/>
+<config key="check_file_format_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="check_file_format" type="xboolean" value="true"/>
+<config key="group_files_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="group_files" type="xboolean" value="true"/>
+<config key="img_factory_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_string"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="img_factory" type="xstring" value="Array Image Factory"/>
+<config key="read_all_series_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="read_all_series" type="xboolean" value="true"/>
+<config key="series_selection_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_integer"/>
+<entry key="EnabledStatus" type="xboolean" value="false"/>
+</config>
+<entry key="series_selection" type="xint" value="0"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="IDLE"/>
+<entry key="factory" type="xstring" value="org.knime.knip.io.nodes.imgreader.ImgReaderNodeFactory"/>
+<entry key="node-name" type="xstring" value="Image Reader"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME Image IO"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.knip.io"/>
+<entry key="node-bundle-vendor" type="xstring" value="University of Konstanz"/>
+<entry key="node-bundle-version" type="xstring" value="1.3.0.qualifier"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="Image Reader"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>
