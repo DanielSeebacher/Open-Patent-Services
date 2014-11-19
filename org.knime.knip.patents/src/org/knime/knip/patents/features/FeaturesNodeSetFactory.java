@@ -8,6 +8,8 @@ import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
+import org.knime.knip.patents.features.binary.ahdh.AHDHNodeFactory;
+import org.knime.knip.patents.features.binary.ahdh.SimpleAHDHNodeFactory;
 import org.knime.knip.patents.features.binary.ahgc.AHGCNodeFactory;
 
 public class FeaturesNodeSetFactory implements NodeSetFactory {
@@ -58,10 +60,12 @@ public class FeaturesNodeSetFactory implements NodeSetFactory {
 	 */
 	@Override
 	public Collection<String> getNodeFactoryIds() {
-		m_nodeFactories.put(
-				AHGCNodeFactory.class
-						.getCanonicalName(), "/community/knip/image/binary/features");
-
+		m_nodeFactories.put(AHGCNodeFactory.class.getCanonicalName(),
+				"/community/knip/patent/features/binary");
+		m_nodeFactories.put(SimpleAHDHNodeFactory.class.getCanonicalName(),
+				"/community/knip/patent/features/binary");
+		m_nodeFactories.put(AHDHNodeFactory.class.getCanonicalName(),
+				"/community/knip/patent/features/binary");
 		return m_nodeFactories.keySet();
 	}
 
