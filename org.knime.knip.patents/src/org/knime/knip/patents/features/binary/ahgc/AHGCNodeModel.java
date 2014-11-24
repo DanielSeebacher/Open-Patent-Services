@@ -57,7 +57,12 @@ public class AHGCNodeModel extends
 			for (IntervalView<BitType> region : regions) {
 				centroids.add(getCentroid(region));
 			}
-			fv.addAll(centroids);
+
+			for (double[] ds : centroids) {
+				double relative_x = ds[0] / img.dimension(0) * 100d;
+				double relative_y = ds[1] / img.dimension(1) * 100d;
+				fv.add(new double[] { relative_x, relative_y });
+			}
 
 			List<IntervalView<BitType>> subregions = new ArrayList<>();
 			for (int l = 0; l < regions.size(); l++) {
@@ -116,6 +121,12 @@ public class AHGCNodeModel extends
 				cy += cursor.getLongPosition(1);
 				sum++;
 			}
+		}
+		
+		if (sum == 0) {
+			cx = region.max(0) - region.min(0);
+			cy = region.max(1) - region.min(1);
+			sum = 2;
 		}
 
 		return new double[] { cx / sum, cy / sum };

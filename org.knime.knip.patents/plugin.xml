@@ -9,5 +9,10 @@
             factory-class="org.knime.knip.patents.features.FeaturesNodeSetFactory"
             id="org.knime.knip.patents.features.FeaturesNodeSetFactory">
       </nodeset>
+      <nodeset
+            expert-flag="false"
+            factory-class="org.knime.knip.patents.nodes.PatentNodeSetFactory"
+            id="org.knime.knip.patents.nodes.PatentNodeSetFactory">
+      </nodeset>
    </extension>
 </plugin>
