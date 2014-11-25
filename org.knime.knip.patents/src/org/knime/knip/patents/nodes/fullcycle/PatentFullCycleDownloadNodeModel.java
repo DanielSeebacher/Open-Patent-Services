@@ -54,7 +54,9 @@ public class PatentFullCycleDownloadNodeModel extends
 		if (overviewResponseCode >= 400) {
 			throw new RuntimeException("Server returned error ["
 					+ overviewResponseCode + ", "
-					+ fullCycleHttpConnection.getResponseMessage() + "]");
+					+ fullCycleHttpConnection.getResponseMessage() + "]"
+					+ "\n Respone: \n"
+					+ parseErrorMessage(fullCycleHttpConnection));
 		}
 
 		// download doc

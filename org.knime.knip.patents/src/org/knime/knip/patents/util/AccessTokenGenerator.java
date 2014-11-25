@@ -46,7 +46,6 @@ public class AccessTokenGenerator {
 
 		AccessToken request = accessTokens.get(encodedString);
 		if (request != null) {
-			System.out.println(request.getAccessTokenString()+"\t"+request.issuedAt);
 			return request.getAccessTokenString();
 		}
 

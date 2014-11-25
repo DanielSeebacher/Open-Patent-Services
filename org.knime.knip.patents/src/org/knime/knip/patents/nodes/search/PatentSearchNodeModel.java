@@ -26,6 +26,8 @@ import org.w3c.dom.NodeList;
 
 public class PatentSearchNodeModel extends AbstractPatentDownloadNodeModel {
 
+	private static final int MAX_ALLOWED_PER_REQUEST = 100;
+
 	static SettingsModelIntegerBounded createStartRangeModel() {
 		return new SettingsModelIntegerBounded("startRange", 1, 1,
 				Integer.MAX_VALUE);
@@ -60,48 +62,59 @@ public class PatentSearchNodeModel extends AbstractPatentDownloadNodeModel {
 					consumerKey, consumerSecret);
 		}
 
-		// build search url
-		URL fullCycleURL = getQueryURL(queryValue.getStringValue(),
-				m_startRange.getIntValue(), m_endRange.getIntValue());
-		HttpURLConnection fullCycleHttpConnection = (HttpURLConnection) fullCycleURL
-				.openConnection();
-
-		// set accesstoken if available
-		if (accessToken != null) {
-			fullCycleHttpConnection.setRequestProperty("Authorization",
-					"Bearer " + accessToken);
-		}
-
-		// check html respone
-		int overviewResponseCode = fullCycleHttpConnection.getResponseCode();
-		if (overviewResponseCode >= 400) {
-			throw new RuntimeException("Server returned error ["
-					+ overviewResponseCode + ", "
-					+ fullCycleHttpConnection.getResponseMessage() + "]");
-		}
-
-		// download doc
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(fullCycleHttpConnection.getInputStream());
-
 		List<Patent> patentsList = new ArrayList<>();
-		NodeList patentsNodeList = doc.getElementsByTagName("document-id");
-		for (int i = 0; i < patentsNodeList.getLength(); i++) {
-			Element patent = (Element) patentsNodeList.item(i);
+		for (int fromRange = m_startRange.getIntValue(); fromRange < m_endRange
+				.getIntValue(); fromRange += MAX_ALLOWED_PER_REQUEST) {
+			// build search url
+			URL queryURL = getQueryURL(
+					queryValue.getStringValue(),
+					fromRange,
+					Math.min(m_endRange.getIntValue(), (fromRange
+							+ MAX_ALLOWED_PER_REQUEST - 1)));
+						
+			HttpURLConnection searchHttpConnection = (HttpURLConnection) queryURL
+					.openConnection();
 
-			if (!patent.getAttribute("document-id-type").equals("docdb")) {
-				continue;
+			
+			// set accesstoken if available
+			if (accessToken != null) {
+				searchHttpConnection.setRequestProperty("Authorization",
+						"Bearer " + accessToken);
 			}
 
-			String country = patent.getElementsByTagName("country").item(0)
-					.getTextContent();
-			String docnumber = patent.getElementsByTagName("doc-number")
-					.item(0).getTextContent();
-			String kind = patent.getElementsByTagName("kind").item(0)
-					.getTextContent();
+			// check html respone
+			int searchResponeCode = searchHttpConnection
+					.getResponseCode();
+			if (searchResponeCode >= 400) {
+				throw new RuntimeException("Server returned error ["
+						+ searchResponeCode + ", "
+						+ searchHttpConnection.getResponseMessage() + "]"
+						+ "\n Respone: \n"
+						+ parseErrorMessage(searchHttpConnection));
+			}
 
-			patentsList.add(new Patent(country, docnumber, kind));
+			// download doc
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(searchHttpConnection.getInputStream());
+
+			NodeList patentsNodeList = doc.getElementsByTagName("document-id");
+			for (int i = 0; i < patentsNodeList.getLength(); i++) {
+				Element patent = (Element) patentsNodeList.item(i);
+
+				if (!patent.getAttribute("document-id-type").equals("docdb")) {
+					continue;
+				}
+
+				String country = patent.getElementsByTagName("country").item(0)
+						.getTextContent();
+				String docnumber = patent.getElementsByTagName("doc-number")
+						.item(0).getTextContent();
+				String kind = patent.getElementsByTagName("kind").item(0)
+						.getTextContent();
+
+				patentsList.add(new Patent(country, docnumber, kind));
+			}
 		}
 
 		List<StringCell> cells = new ArrayList<>();

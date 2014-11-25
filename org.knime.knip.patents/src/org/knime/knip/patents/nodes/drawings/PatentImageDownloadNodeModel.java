@@ -61,8 +61,9 @@ public class PatentImageDownloadNodeModel extends
 			} else {
 				throw new RuntimeException("Server returned error ["
 						+ overviewResponseCode + ", "
-						+ imageOverviewHttpConnection.getResponseMessage()
-						+ "]");
+						+ imageOverviewHttpConnection.getResponseMessage() + "]"
+						+ "\n Respone: \n"
+						+ parseErrorMessage(imageOverviewHttpConnection));
 			}
 		}
 
@@ -75,21 +76,41 @@ public class PatentImageDownloadNodeModel extends
 
 		// download images to tmp directory and save absolute paths
 		List<StringCell> pathToImages = new ArrayList<>();
+		int retries = 0;
 		for (int i = 0; i < dch.getNumberOfPages(); i++) {
 			URL absoluteImageURL = getAbsoluteImageURL(dch.getLink(),
 					(dch.getStartPage() + i));
 			HttpURLConnection absoluteImageHttpConnection = (HttpURLConnection) absoluteImageURL
 					.openConnection();
+			
+			if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
+				accessToken = AccessTokenGenerator.getInstance().getAccessToken(
+						consumerKey, consumerSecret);
+			}
+			
+			// set accesstoken if available
+			if (accessToken != null) {
+				absoluteImageHttpConnection.setRequestProperty("Authorization",
+						"Bearer " + accessToken);
+			}
 
 			// check html respone
 			int absoluteResponseCode = absoluteImageHttpConnection
 					.getResponseCode();
-			if (absoluteResponseCode >= 400) {
+			if (absoluteResponseCode >= 400 && absoluteResponseCode < 500) {
 				throw new RuntimeException("Server returned error ["
 						+ absoluteResponseCode + ", "
-						+ absoluteImageHttpConnection.getResponseMessage()
-						+ "]");
+						+ absoluteImageHttpConnection.getResponseMessage() + "]"
+						+ "\n Respone: \n"
+						+ parseErrorMessage(absoluteImageHttpConnection));
+			} else if (absoluteResponseCode != 200) {
+				if (retries++ < 5) {
+					i--;
+				}
+				continue;
 			}
+
+			retries = 0;
 
 			ReadableByteChannel rbc = Channels
 					.newChannel(absoluteImageHttpConnection.getInputStream());

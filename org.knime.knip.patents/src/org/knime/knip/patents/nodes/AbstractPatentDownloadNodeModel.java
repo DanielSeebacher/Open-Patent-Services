@@ -47,7 +47,7 @@ public abstract class AbstractPatentDownloadNodeModel extends
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(connection.getInputStream());
+		Document doc = db.parse(connection.getErrorStream());
 
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -56,9 +56,7 @@ public abstract class AbstractPatentDownloadNodeModel extends
 		DOMSource source = new DOMSource(doc);
 		transformer.transform(source, result);
 		String xmlString = result.getWriter().toString();
-		System.out.println(xmlString);
 		
-		
-		return null;
+		return xmlString;
 	}
 }
