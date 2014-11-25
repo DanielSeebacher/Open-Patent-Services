@@ -1,36 +1,21 @@
 package org.knime.knip.patents.nodes.fullcycle;
 
-import org.knime.core.node.NodeDialogPane;
-import org.knime.core.node.NodeFactory;
-import org.knime.core.node.NodeView;
+import org.knime.core.data.StringValue;
+import org.knime.knip.base.node.ValueToCellsNodeDialog;
+import org.knime.knip.base.node.ValueToCellsNodeFactory;
+import org.knime.knip.base.node.ValueToCellsNodeModel;
 
 public class PatentFullCycleDownloadNodeFactory extends
-		NodeFactory<PatentFullCycleDownloadNodeModel> {
+		ValueToCellsNodeFactory<StringValue> {
 
 	@Override
-	public PatentFullCycleDownloadNodeModel createNodeModel() {
-		return new PatentFullCycleDownloadNodeModel();
-	}
-
-	@Override
-	protected int getNrNodeViews() {
-		return 0;
-	}
-
-	@Override
-	public NodeView<PatentFullCycleDownloadNodeModel> createNodeView(int viewIndex,
-			PatentFullCycleDownloadNodeModel nodeModel) {
-		return null;
-	}
-
-	@Override
-	protected boolean hasDialog() {
-		return true;
-	}
-
-	@Override
-	protected NodeDialogPane createNodeDialogPane() {
+	protected ValueToCellsNodeDialog<StringValue> createNodeDialog() {
 		return new PatentFullCycleDownloadNodeDialog();
+	}
+
+	@Override
+	public ValueToCellsNodeModel<StringValue> createNodeModel() {
+		return new PatentFullCycleDownloadNodeModel();
 	}
 
 }

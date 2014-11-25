@@ -1,21 +1,29 @@
 package org.knime.knip.patents.nodes;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.util.List;
 
-import org.knime.core.node.CanceledExecutionException;
-import org.knime.core.node.ExecutionMonitor;
-import org.knime.core.node.InvalidSettingsException;
-import org.knime.core.node.NodeModel;
-import org.knime.core.node.NodeSettingsRO;
-import org.knime.core.node.NodeSettingsWO;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.knime.core.data.StringValue;
+import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
+import org.knime.knip.base.node.ValueToCellsNodeModel;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
-public abstract class AbstractPatentDownloadNodeModel extends NodeModel {
-
-	public AbstractPatentDownloadNodeModel(final int in, final int out) {
-		super(in, out);
-	}
+public abstract class AbstractPatentDownloadNodeModel extends
+		ValueToCellsNodeModel<StringValue> {
 
 	public static SettingsModelString createConsumerKeyModel() {
 		return new SettingsModelString("m_consumerKey", "");
@@ -29,43 +37,28 @@ public abstract class AbstractPatentDownloadNodeModel extends NodeModel {
 	protected final SettingsModelString m_consumerSecret = createConsumerSecretModel();
 
 	@Override
-	protected void loadInternals(File nodeInternDir, ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-		// TODO Auto-generated method stub
-
+	protected void addSettingsModels(List<SettingsModel> settingsModels) {
+		settingsModels.add(m_consumerKey);
+		settingsModels.add(m_consumerSecret);
 	}
 
-	@Override
-	protected void saveInternals(File nodeInternDir, ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-		// TODO Auto-generated method stub
+	protected String parseErrorMessage(HttpURLConnection connection)
+			throws SAXException, IOException, ParserConfigurationException, TransformerException {
 
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.parse(connection.getInputStream());
+
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		//initialize StreamResult with File object to save to file
+		StreamResult result = new StreamResult(new StringWriter());
+		DOMSource source = new DOMSource(doc);
+		transformer.transform(source, result);
+		String xmlString = result.getWriter().toString();
+		System.out.println(xmlString);
+		
+		
+		return null;
 	}
-
-	@Override
-	protected void saveSettingsTo(NodeSettingsWO settings) {
-		m_consumerKey.saveSettingsTo(settings);
-		m_consumerSecret.saveSettingsTo(settings);
-	}
-
-	@Override
-	protected void validateSettings(NodeSettingsRO settings)
-			throws InvalidSettingsException {
-		m_consumerKey.validateSettings(settings);
-		m_consumerSecret.validateSettings(settings);
-	}
-
-	@Override
-	protected void loadValidatedSettingsFrom(NodeSettingsRO settings)
-			throws InvalidSettingsException {
-		m_consumerKey.loadSettingsFrom(settings);
-		m_consumerSecret.loadSettingsFrom(settings);
-	}
-
-	@Override
-	protected void reset() {
-		// TODO Auto-generated method stub
-
-	}
-
 }

@@ -6,17 +6,19 @@
 
 <!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
 <knimeNode icon="/icons/logo.png" type="Manipulator">
-	<name>Patent FullCycle Download</name>
-	<shortDescription>Downloads fullcycle of a patent.</shortDescription>
+	<name>Patent Searcher</name>
+	<shortDescription>Search for patents.</shortDescription>
 
 	<fullDescription>
 		<intro>
-			Uses the ops.epo.org service to download the applicants,
-			inventors, title and abstract of a patent, given its
-			country/docnumber/kind code. Supports OAuth2
+			Uses the ops.epo.org service to search for patents, given a
+			valid query. Supports OAuth2
 			authentication, if the
-			user has a valid consumer key and consumer secret.
+			user has a valid
+			consumer key and consumer secret.
 		</intro>
+
+
 		<option name="Consumer Key">
 			Consumer Key used for OAuth2 Authentication.
 		</option>
@@ -24,22 +26,17 @@
 			Consumer Secret used for OAuth2 Authentication.
 		</option>
 
-		<option name="Country">
-			The Country code of the patent (US, WO, ...)
+		<option name="Query">
+			The search query.
 		</option>
-		<option name="Consumer Secret">
-			The DocNumber of the patent (in docdb format)
-		</option>
-		<option name="Kind">
-			The Kind code of the patent (A1, ...)
-		</option>
+
 	</fullDescription>
 
 	<ports>
 		<inPort index="0" name="Patents">
 			Patents
 		</inPort>
-		<outPort index="0" name="FullCycle">
+		<outPort index="0" name="Patents">
 			All applicants, inventors, the title
 			and abstract of a patent.
 		</outPort>

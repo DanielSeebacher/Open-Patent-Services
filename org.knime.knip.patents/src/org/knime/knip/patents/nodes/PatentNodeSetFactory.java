@@ -10,6 +10,7 @@ import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
 import org.knime.knip.patents.nodes.drawings.PatentImageDownloadNodeFactory;
 import org.knime.knip.patents.nodes.fullcycle.PatentFullCycleDownloadNodeFactory;
+import org.knime.knip.patents.nodes.search.PatentSearchNodeFactory;
 
 public class PatentNodeSetFactory implements NodeSetFactory {
 
@@ -61,10 +62,13 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 	public Collection<String> getNodeFactoryIds() {
 		m_nodeFactories.put(
 				PatentImageDownloadNodeFactory.class.getCanonicalName(),
-				"/community/knip/patent/misc/");
+				"/community/knip/patents/Utilities/");
 		m_nodeFactories.put(
 				PatentFullCycleDownloadNodeFactory.class.getCanonicalName(),
-				"/community/knip/patent/misc/");
+				"/community/knip/patents/Utilities/");
+		m_nodeFactories.put(PatentSearchNodeFactory.class.getCanonicalName(),
+				"/community/knip/patents/Utilities/");
+
 		return m_nodeFactories.keySet();
 	}
 

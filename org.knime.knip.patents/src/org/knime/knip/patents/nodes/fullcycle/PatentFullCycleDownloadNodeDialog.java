@@ -1,29 +1,24 @@
 package org.knime.knip.patents.nodes.fullcycle;
 
 import org.knime.core.data.StringValue;
-import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelection;
-import org.knime.knip.patents.nodes.AbstractPatentDownloadNodeDialog;
+import org.knime.core.node.defaultnodesettings.DialogComponentString;
+import org.knime.knip.base.node.ValueToCellsNodeDialog;
+import org.knime.knip.patents.nodes.AbstractPatentDownloadNodeModel;
 
-public class PatentFullCycleDownloadNodeDialog extends
-		AbstractPatentDownloadNodeDialog {
+public class PatentFullCycleDownloadNodeDialog extends ValueToCellsNodeDialog<StringValue> {
 
-	@SuppressWarnings("unchecked")
-	public PatentFullCycleDownloadNodeDialog() {
-		super();
+	@Override
+	public void addDialogComponents() {
+		addDialogComponent(
+				"Options",
+				"OAuth2 Settings",
+				new DialogComponentString(AbstractPatentDownloadNodeModel
+						.createConsumerKeyModel(), "Consumer Key"));
 
-		createNewGroup("Patent Informations");
-
-		addDialogComponent(new DialogComponentColumnNameSelection(
-				PatentFullCycleDownloadNodeModel.createCountryCodeModel(),
-				"Country", 0, false, true, StringValue.class));
-
-		addDialogComponent(new DialogComponentColumnNameSelection(
-				PatentFullCycleDownloadNodeModel.createDocNumberModel(),
-				"DocNumber", 0, false, true, StringValue.class));
-
-		addDialogComponent(new DialogComponentColumnNameSelection(
-				PatentFullCycleDownloadNodeModel.createKindCodeModel(), "Kind", 0,
-				false, true, StringValue.class));
+		addDialogComponent(
+				"Options",
+				"OAuth2 Settings",
+				new DialogComponentString(AbstractPatentDownloadNodeModel
+						.createConsumerSecretModel(), "Consumer Secret"));
 	}
-
 }

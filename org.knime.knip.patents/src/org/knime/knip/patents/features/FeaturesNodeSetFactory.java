@@ -61,11 +61,11 @@ public class FeaturesNodeSetFactory implements NodeSetFactory {
 	@Override
 	public Collection<String> getNodeFactoryIds() {
 		m_nodeFactories.put(AHGCNodeFactory.class.getCanonicalName(),
-				"/community/knip/patent/features/binary");
+				"/community/knip/patents/Features");
 		m_nodeFactories.put(SimpleAHDHNodeFactory.class.getCanonicalName(),
-				"/community/knip/patent/features/binary");
+				"/community/knip/patents/Features");
 		m_nodeFactories.put(AHDHNodeFactory.class.getCanonicalName(),
-				"/community/knip/patent/features/binary");
+				"/community/knip/patents/Features");
 		return m_nodeFactories.keySet();
 	}
 

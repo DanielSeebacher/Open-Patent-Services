@@ -5,30 +5,41 @@
 	Contributors: IBM Corporation - initial API and implementation -->
 
 <!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
-<knimeNode icon="default.png" type="Manipulator">
+<knimeNode icon="/icons/logo.png" type="Manipulator">
 	<name>Patent Image Download</name>
-	<shortDescription>Downloads images.</shortDescription>
+	<shortDescription>Downloads drawings of a patent.</shortDescription>
 
 	<fullDescription>
 		<intro>
-			bla
+			Uses the ops.epo.org service to download all drawings of a
+			patent, given its country/docnumber/kind code. Supports OAuth2
+			authentication, if the user has a valid consumer key and consumer
+			secret.
 		</intro>
-		<option name="Num Levels">
-			Defines how many centroids should be calculated.
-			Careful as the number of centroids rises exponentially.
+		<option name="Consumer Key">
+			Consumer Key used for OAuth2 Authentication.
 		</option>
-		<option name="White as background?">
-			If white should be used as the background color.
+		<option name="Consumer Secret">
+			Consumer Secret used for OAuth2 Authentication.
+		</option>
+
+		<option name="Country">
+			The Country code of the patent (US, WO, ...)
+		</option>
+		<option name="Consumer Secret">
+			The DocNumber of the patent (in docdb format)
+		</option>
+		<option name="Kind">
+			The Kind code of the patent (A1, ...)
 		</option>
 	</fullDescription>
 
 	<ports>
-		<inPort index="0" name="Images">
-			The binary images for which the AHGC
-			feature should be calculated.
+		<inPort index="0" name="Patents">
+			Patents
 		</inPort>
-		<outPort index="0" name="AHGC Feature">
-			The calculated AGHC features.
+		<outPort index="0" name="Drawings">
+			All drawings of the patents.
 		</outPort>
 	</ports>
 </knimeNode>
