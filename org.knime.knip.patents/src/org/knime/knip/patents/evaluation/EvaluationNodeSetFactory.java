@@ -1,4 +1,4 @@
-package org.knime.knip.patents.nodes;
+package org.knime.knip.patents.evaluation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,11 +8,9 @@ import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
-import org.knime.knip.patents.nodes.drawings.PatentImageDownloadNodeFactory;
-import org.knime.knip.patents.nodes.fullcycle.PatentFullCycleDownloadNodeFactory;
-import org.knime.knip.patents.nodes.search.PatentSearchNodeFactory;
+import org.knime.knip.patents.evaluation.precision.InterpolatePrecisionNodeFactory;
 
-public class PatentNodeSetFactory implements NodeSetFactory {
+public class EvaluationNodeSetFactory implements NodeSetFactory {
 
 	private final Map<String, String> m_nodeFactories = new HashMap<String, String>();
 
@@ -61,14 +59,8 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 	@Override
 	public Collection<String> getNodeFactoryIds() {
 		m_nodeFactories.put(
-				PatentImageDownloadNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(
-				PatentFullCycleDownloadNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(PatentSearchNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-
+				InterpolatePrecisionNodeFactory.class.getCanonicalName(),
+				"/community/knip/patents/Evaluation/");
 		return m_nodeFactories.keySet();
 	}
 

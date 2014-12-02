@@ -23,8 +23,14 @@
       <nodeset
             default-category-icon="icons/logo.png"
             expert-flag="false"
-            factory-class="org.knime.knip.patents.nodes.PatentNodeSetFactory"
-            id="org.knime.knip.patents.nodes.PatentNodeSetFactory">
+            factory-class="org.knime.knip.patents.util.PatentNodeSetFactory"
+            id="org.knime.knip.patents.util.PatentNodeSetFactory">
+      </nodeset>
+      <nodeset
+            default-category-icon="icons/logo.png"
+            expert-flag="false"
+            factory-class="org.knime.knip.patents.evaluation.EvaluationNodeSetFactory"
+            id="org.knime.knip.patents.evaluation.EvaluationNodeSetFactory">
       </nodeset>
    </extension>
 </plugin>

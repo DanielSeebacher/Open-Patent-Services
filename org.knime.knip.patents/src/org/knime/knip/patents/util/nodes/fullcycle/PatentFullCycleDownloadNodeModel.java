@@ -1,4 +1,4 @@
-package org.knime.knip.patents.nodes.fullcycle;
+package org.knime.knip.patents.util.nodes.fullcycle;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -16,7 +16,7 @@ import org.knime.core.data.collection.CollectionCellFactory;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.util.Pair;
-import org.knime.knip.patents.nodes.AbstractPatentDownloadNodeModel;
+import org.knime.knip.patents.util.AbstractPatentDownloadNodeModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

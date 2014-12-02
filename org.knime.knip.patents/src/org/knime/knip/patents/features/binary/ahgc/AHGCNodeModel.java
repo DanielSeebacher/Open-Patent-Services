@@ -122,11 +122,12 @@ public class AHGCNodeModel extends
 				sum++;
 			}
 		}
-		
+
+		// if a region is empty use the default centroid
 		if (sum == 0) {
-			cx = region.max(0) - region.min(0);
-			cy = region.max(1) - region.min(1);
-			sum = 2;
+			return new double[] {
+					region.min(0) + (region.max(0) - region.min(0)) / 2,
+					region.min(1) + (region.max(1) - region.min(1)) / 2 };
 		}
 
 		return new double[] { cx / sum, cy / sum };

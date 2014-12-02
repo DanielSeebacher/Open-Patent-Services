@@ -1,4 +1,4 @@
-package org.knime.knip.patents.nodes;
+package org.knime.knip.patents.util;
 
 import java.io.IOException;
 import java.io.StringWriter;

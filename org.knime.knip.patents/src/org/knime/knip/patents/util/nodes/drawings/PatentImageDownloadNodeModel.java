@@ -1,4 +1,4 @@
-package org.knime.knip.patents.nodes.drawings;
+package org.knime.knip.patents.util.nodes.drawings;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,7 +18,7 @@ import org.knime.core.data.collection.CollectionCellFactory;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.util.Pair;
-import org.knime.knip.patents.nodes.AbstractPatentDownloadNodeModel;
+import org.knime.knip.patents.util.AbstractPatentDownloadNodeModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -61,8 +61,8 @@ public class PatentImageDownloadNodeModel extends
 			} else {
 				throw new RuntimeException("Server returned error ["
 						+ overviewResponseCode + ", "
-						+ imageOverviewHttpConnection.getResponseMessage() + "]"
-						+ "\n Respone: \n"
+						+ imageOverviewHttpConnection.getResponseMessage()
+						+ "]" + "\n Respone: \n"
 						+ parseErrorMessage(imageOverviewHttpConnection));
 			}
 		}
@@ -82,12 +82,12 @@ public class PatentImageDownloadNodeModel extends
 					(dch.getStartPage() + i));
 			HttpURLConnection absoluteImageHttpConnection = (HttpURLConnection) absoluteImageURL
 					.openConnection();
-			
+
 			if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
-				accessToken = AccessTokenGenerator.getInstance().getAccessToken(
-						consumerKey, consumerSecret);
+				accessToken = AccessTokenGenerator.getInstance()
+						.getAccessToken(consumerKey, consumerSecret);
 			}
-			
+
 			// set accesstoken if available
 			if (accessToken != null) {
 				absoluteImageHttpConnection.setRequestProperty("Authorization",
@@ -97,11 +97,38 @@ public class PatentImageDownloadNodeModel extends
 			// check html respone
 			int absoluteResponseCode = absoluteImageHttpConnection
 					.getResponseCode();
+
+			String throttleControl = absoluteImageHttpConnection
+					.getHeaderField("X-Throttling-Control");
+			String serverStatus = throttleControl.split(" ")[0];
+			int imageServiceLimit = Integer.parseInt(throttleControl
+					.split("images=")[1].split(":")[1].split(",")[0]);
+
+			if (imageServiceLimit == 0) {
+				getLogger().warn(
+						"Server Status: " + serverStatus
+								+ "\t Image Throttle Control Set to "
+								+ imageServiceLimit
+								+ " images per minute! Retry in 1 minute!");
+				Thread.sleep(60000);
+				i--;
+				continue;
+			} else {
+				int s = 60000 / imageServiceLimit;
+				getLogger().info(
+						"Server Status: " + serverStatus
+								+ "\t Image Throttle Control Set to "
+								+ imageServiceLimit
+								+ " images per minute! \t Sleeping for "
+								+ (s / 1000) + " seconds!");
+				Thread.sleep(s);
+			}
+
 			if (absoluteResponseCode >= 400 && absoluteResponseCode < 500) {
 				throw new RuntimeException("Server returned error ["
 						+ absoluteResponseCode + ", "
-						+ absoluteImageHttpConnection.getResponseMessage() + "]"
-						+ "\n Respone: \n"
+						+ absoluteImageHttpConnection.getResponseMessage()
+						+ "]" + "\n Respone: \n"
 						+ parseErrorMessage(absoluteImageHttpConnection));
 			} else if (absoluteResponseCode != 200) {
 				if (retries++ < 5) {

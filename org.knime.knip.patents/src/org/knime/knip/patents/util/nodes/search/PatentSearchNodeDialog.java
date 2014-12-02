@@ -1,10 +1,10 @@
-package org.knime.knip.patents.nodes.search;
+package org.knime.knip.patents.util.nodes.search;
 
 import org.knime.core.data.StringValue;
 import org.knime.core.node.defaultnodesettings.DialogComponentNumber;
 import org.knime.core.node.defaultnodesettings.DialogComponentString;
 import org.knime.knip.base.node.ValueToCellsNodeDialog;
-import org.knime.knip.patents.nodes.AbstractPatentDownloadNodeModel;
+import org.knime.knip.patents.util.AbstractPatentDownloadNodeModel;
 
 public class PatentSearchNodeDialog extends ValueToCellsNodeDialog<StringValue> {
 

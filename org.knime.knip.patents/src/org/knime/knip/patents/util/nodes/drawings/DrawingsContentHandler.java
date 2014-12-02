@@ -1,4 +1,4 @@
-package org.knime.knip.patents.nodes.drawings;
+package org.knime.knip.patents.util.nodes.drawings;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
