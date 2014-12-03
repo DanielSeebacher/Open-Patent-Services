@@ -10,6 +10,11 @@ import org.knime.knip.base.node.ValueToCellNodeDialog;
 import org.knime.knip.base.node.ValueToCellNodeFactory;
 import org.knime.knip.base.node.ValueToCellNodeModel;
 
+/**
+ * Simple {@link ValueToCellNodeFactory}.
+ * 
+ * @author Daniel Seebacher, University of Konstanz
+ */
 public class AHDHNodeFactory extends
 		ValueToCellNodeFactory<ImgPlusValue<BitType>> {
 

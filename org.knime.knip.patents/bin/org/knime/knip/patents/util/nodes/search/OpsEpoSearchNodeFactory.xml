@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (c) 2010 IBM Corporation 
+	and others. All rights reserved. This program and the accompanying materials 
+	are made available under the terms of the Eclipse Public License v1.0 which 
+	accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html 
+	Contributors: IBM Corporation - initial API and implementation -->
+
+<!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
+<knimeNode icon="/icons/logo.png" type="Manipulator">
+	<name>ops.epo.org Searcher</name>
+	<shortDescription>Search for patents.</shortDescription>
+
+	<fullDescription>
+		<intro>
+			Uses the ops.epo.org service to search for patents, given a
+			valid query. Supports OAuth2
+			authentication, if the
+			user has a valid
+			consumer key and consumer secret.
+		</intro>
+
+
+		<option name="Consumer Key">
+			Consumer Key used for OAuth2 Authentication.
+		</option>
+		<option name="Consumer Secret">
+			Consumer Secret used for OAuth2 Authentication.
+		</option>
+
+		<option name="Query">
+			The search query.
+		</option>
+
+	</fullDescription>
+
+	<ports>
+		<inPort index="0" name="Patents">
+			Patents
+		</inPort>
+		<outPort index="0" name="PatentÍDS">
+			The IDS of all patents found by the
+			given query.
+		</outPort>
+	</ports>
+</knimeNode>

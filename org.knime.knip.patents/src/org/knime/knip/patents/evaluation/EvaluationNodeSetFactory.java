@@ -1,4 +1,4 @@
-package org.knime.knip.patents.features;
+package org.knime.knip.patents.evaluation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,15 +8,14 @@ import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
-import org.knime.knip.patents.features.binary.ahdh.AHDHNodeFactory;
-import org.knime.knip.patents.features.binary.ahgc.AHGCNodeFactory;
+import org.knime.knip.patents.evaluation.precision.InterpolatePrecisionNodeFactory;
 
 /**
- * NodeSetFactory for Nodes which are used to calculate features.
+ * NodeSetFactory for Nodes which are used for the evaluation.
  * 
  * @author Daniel Seebacher, University of Konstanz.
  */
-public class FeaturesNodeSetFactory implements NodeSetFactory {
+public class EvaluationNodeSetFactory implements NodeSetFactory {
 
 	private final Map<String, String> m_nodeFactories = new HashMap<String, String>();
 
@@ -64,11 +63,9 @@ public class FeaturesNodeSetFactory implements NodeSetFactory {
 	 */
 	@Override
 	public Collection<String> getNodeFactoryIds() {
-		m_nodeFactories.put(AHGCNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Features");
-		m_nodeFactories.put(AHDHNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Features");
-
+		m_nodeFactories.put(
+				InterpolatePrecisionNodeFactory.class.getCanonicalName(),
+				"/community/knip/patents/Evaluation/");
 		return m_nodeFactories.keySet();
 	}
 

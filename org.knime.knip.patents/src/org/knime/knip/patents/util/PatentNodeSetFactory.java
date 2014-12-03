@@ -1,4 +1,4 @@
-package org.knime.knip.patents.features;
+package org.knime.knip.patents.util;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,15 +8,16 @@ import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
-import org.knime.knip.patents.features.binary.ahdh.AHDHNodeFactory;
-import org.knime.knip.patents.features.binary.ahgc.AHGCNodeFactory;
+import org.knime.knip.patents.util.nodes.drawings.OpsEpoImagesNodeFactory;
+import org.knime.knip.patents.util.nodes.fullcycle.OpsEpoFullCycleNodeFactory;
+import org.knime.knip.patents.util.nodes.search.OpsEpoSearchNodeFactory;
 
 /**
  * NodeSetFactory for Nodes which are used to calculate features.
  * 
  * @author Daniel Seebacher, University of Konstanz.
  */
-public class FeaturesNodeSetFactory implements NodeSetFactory {
+public class PatentNodeSetFactory implements NodeSetFactory {
 
 	private final Map<String, String> m_nodeFactories = new HashMap<String, String>();
 
@@ -64,10 +65,14 @@ public class FeaturesNodeSetFactory implements NodeSetFactory {
 	 */
 	@Override
 	public Collection<String> getNodeFactoryIds() {
-		m_nodeFactories.put(AHGCNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Features");
-		m_nodeFactories.put(AHDHNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Features");
+		m_nodeFactories.put(
+				OpsEpoImagesNodeFactory.class.getCanonicalName(),
+				"/community/knip/patents/Utilities/");
+		m_nodeFactories.put(
+				OpsEpoFullCycleNodeFactory.class.getCanonicalName(),
+				"/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OpsEpoSearchNodeFactory.class.getCanonicalName(),
+				"/community/knip/patents/Utilities/");
 
 		return m_nodeFactories.keySet();
 	}
