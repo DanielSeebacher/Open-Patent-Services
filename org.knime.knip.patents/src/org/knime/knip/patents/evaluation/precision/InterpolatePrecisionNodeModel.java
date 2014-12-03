@@ -15,14 +15,19 @@ import org.knime.core.data.def.DoubleCell;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.knip.base.node.TwoValuesToCellNodeModel;
 
+/**
+ * Takes a list of already sorted recall and precision values and returns the
+ * interpolated values at 0, 0.1, ..., 1.0.
+ * 
+ * @author Daniel Seebacher, University of Konstanz
+ */
 public class InterpolatePrecisionNodeModel
 		extends
 		TwoValuesToCellNodeModel<CollectionDataValue, CollectionDataValue, ListCell> {
 
 	@Override
 	protected void addSettingsModels(List<SettingsModel> settingsModels) {
-		// TODO Auto-generated method stub
-
+		// no settings needed
 	}
 
 	@Override

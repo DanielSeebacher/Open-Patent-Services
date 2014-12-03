@@ -10,6 +10,11 @@ import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
 import org.knime.knip.patents.evaluation.precision.InterpolatePrecisionNodeFactory;
 
+/**
+ * NodeSetFactory for Nodes which are used for the evaluation.
+ * 
+ * @author Daniel Seebacher, University of Konstanz.
+ */
 public class EvaluationNodeSetFactory implements NodeSetFactory {
 
 	private final Map<String, String> m_nodeFactories = new HashMap<String, String>();

@@ -13,6 +13,12 @@ import java.util.Map;
 
 import org.apache.xmlbeans.impl.util.Base64;
 
+/**
+ * AccessTokenGenerator Singleton.
+ * 
+ * @author Daniel Seebacher, University of Konstanz
+ * 
+ */
 public class AccessTokenGenerator {
 
 	private static AccessTokenGenerator instance;
@@ -29,6 +35,16 @@ public class AccessTokenGenerator {
 
 	private Map<String, AccessToken> accessTokens = new HashMap<>();
 
+	/**
+	 * If a valid access token for the given key and secret exist return them,
+	 * otherwise try to generate a new one.
+	 * 
+	 * @param consumerKey
+	 *            a consumer key.
+	 * @param consumerSecret
+	 *            a consumer string.
+	 * @return An Access Token.
+	 */
 	public String getAccessToken(String consumerKey, String consumerSecret) {
 
 		String encodedString = toBase64String(consumerKey, consumerSecret);
@@ -125,17 +141,39 @@ public class AccessTokenGenerator {
 		return null;
 	}
 
+	/**
+	 * Encodes a String in Base64.
+	 * 
+	 * @param consumerKey
+	 *            a consumer key.
+	 * @param consumerSecret
+	 *            a consumer secret.
+	 * 
+	 * @return Base64 Encoded String.
+	 */
 	private String toBase64String(String consumerKey, String consumerSecret) {
 		return new String(
 				Base64.encode((consumerKey.trim() + ":" + consumerSecret.trim())
 						.getBytes()));
 	}
 
+	/**
+	 * Private AccessToken class.
+	 * 
+	 * @author Daniel Seebacher, University of Konstanz.
+	 */
 	private static class AccessToken {
 
 		private final String accessTokenString;
 		private final long issuedAt;
 
+		/**
+		 * Default constructor, access token has a string value and a issuedAt
+		 * time.
+		 * 
+		 * @param accessTokenString
+		 * @param issuedAt
+		 */
 		public AccessToken(String accessTokenString, long issuedAt) {
 			this.accessTokenString = accessTokenString;
 			this.issuedAt = issuedAt;
@@ -145,6 +183,12 @@ public class AccessTokenGenerator {
 			return accessTokenString;
 		}
 
+		/**
+		 * Checks if the access token is valid, first by checking if its null
+		 * and secondly by checking if its older than 20 minutes.
+		 * 
+		 * @return true if accesstoken is still valid.
+		 */
 		public boolean isValid() {
 			if (accessTokenString == null) {
 				return false;

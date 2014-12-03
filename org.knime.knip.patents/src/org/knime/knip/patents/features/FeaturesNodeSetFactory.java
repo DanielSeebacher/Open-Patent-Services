@@ -10,8 +10,12 @@ import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
 import org.knime.knip.patents.features.binary.ahdh.AHDHNodeFactory;
 import org.knime.knip.patents.features.binary.ahgc.AHGCNodeFactory;
-import org.knime.knip.patents.features.binary.geometricblur.GeometricBlurNodeFactory;
 
+/**
+ * NodeSetFactory for Nodes which are used to calculate features.
+ * 
+ * @author Daniel Seebacher, University of Konstanz.
+ */
 public class FeaturesNodeSetFactory implements NodeSetFactory {
 
 	private final Map<String, String> m_nodeFactories = new HashMap<String, String>();
@@ -64,9 +68,7 @@ public class FeaturesNodeSetFactory implements NodeSetFactory {
 				"/community/knip/patents/Features");
 		m_nodeFactories.put(AHDHNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Features");
-		m_nodeFactories.put(GeometricBlurNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Features");
-		
+
 		return m_nodeFactories.keySet();
 	}
 

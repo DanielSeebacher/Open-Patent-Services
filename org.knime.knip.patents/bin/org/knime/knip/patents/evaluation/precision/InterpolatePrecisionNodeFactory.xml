@@ -7,31 +7,23 @@
 <!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
 <knimeNode icon="/icons/logo.png" type="Manipulator">
 	<name>Interpolate Precision</name>
-	<shortDescription>Calculates the AHGC Feature.</shortDescription>
+	<shortDescription>Interpolates the precision at predefined intervals.</shortDescription>
 
 	<fullDescription>
 		<intro>
-			Hierarchically computes the centroid of a region and divides it
-			into four new subregions. For each of these subregions the centroid
-			gets calculated again. The resulting feature vector consists of the x
-			and y values of the centroids.
+			Takes a sorted list of precision and recall values and
+			interpolates the precision at the intervals
+			0, 0.1, ..., 1.0.
 		</intro>
-		<option name="Num Levels">
-			Defines how many centroids should be calculated.
-			Careful as the number of centroids rises exponentially.
-		</option>
-		<option name="White as background?">
-			If white should be used as the background color.
-		</option>
 	</fullDescription>
 
 	<ports>
-		<inPort index="0" name="Images">
-			The binary images for which the AHGC
-			feature should be calculated.
+		<inPort index="0" name="Precision / Recall">
+			Two sorted columns with precision and
+			recall values.
 		</inPort>
-		<outPort index="0" name="AHGC Feature">
-			The calculated AGHC features.
+		<outPort index="0" name="Interpolated Precision">
+			The interpolated precision values.
 		</outPort>
 	</ports>
 </knimeNode>

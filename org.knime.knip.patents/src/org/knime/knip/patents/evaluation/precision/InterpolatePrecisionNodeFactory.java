@@ -6,7 +6,14 @@ import org.knime.knip.base.node.TwoValuesToCellNodeDialog;
 import org.knime.knip.base.node.TwoValuesToCellNodeFactory;
 import org.knime.knip.base.node.TwoValuesToCellNodeModel;
 
-public class InterpolatePrecisionNodeFactory extends TwoValuesToCellNodeFactory<CollectionDataValue, CollectionDataValue> {
+/**
+ * Simple {@link TwoValuesToCellNodeFactory} which returns an empty
+ * {@link TwoValuesToCellNodeDialog}
+ * 
+ * @author Daniel Seebacher, University of Konstanz
+ */
+public class InterpolatePrecisionNodeFactory extends
+		TwoValuesToCellNodeFactory<CollectionDataValue, CollectionDataValue> {
 
 	@Override
 	protected TwoValuesToCellNodeDialog<CollectionDataValue, CollectionDataValue> createNodeDialog() {
@@ -15,7 +22,7 @@ public class InterpolatePrecisionNodeFactory extends TwoValuesToCellNodeFactory<
 			@Override
 			public void addDialogComponents() {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 	}

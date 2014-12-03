@@ -8,11 +8,15 @@ import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
-import org.knime.knip.patents.util.nodes.drawings.PatentImageDownloadNodeFactory;
-import org.knime.knip.patents.util.nodes.fullcycle.PatentFullCycleDownloadNodeFactory;
-import org.knime.knip.patents.util.nodes.quotainfo.QuotaInfoNodeFactory;
-import org.knime.knip.patents.util.nodes.search.PatentSearchNodeFactory;
+import org.knime.knip.patents.util.nodes.drawings.OpsEpoImagesNodeFactory;
+import org.knime.knip.patents.util.nodes.fullcycle.OpsEpoFullCycleNodeFactory;
+import org.knime.knip.patents.util.nodes.search.OpsEpoSearchNodeFactory;
 
+/**
+ * NodeSetFactory for Nodes which are used to calculate features.
+ * 
+ * @author Daniel Seebacher, University of Konstanz.
+ */
 public class PatentNodeSetFactory implements NodeSetFactory {
 
 	private final Map<String, String> m_nodeFactories = new HashMap<String, String>();
@@ -62,14 +66,12 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 	@Override
 	public Collection<String> getNodeFactoryIds() {
 		m_nodeFactories.put(
-				PatentImageDownloadNodeFactory.class.getCanonicalName(),
+				OpsEpoImagesNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
 		m_nodeFactories.put(
-				PatentFullCycleDownloadNodeFactory.class.getCanonicalName(),
+				OpsEpoFullCycleNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(PatentSearchNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(QuotaInfoNodeFactory.class.getCanonicalName(),
+		m_nodeFactories.put(OpsEpoSearchNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
 
 		return m_nodeFactories.keySet();
