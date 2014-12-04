@@ -133,7 +133,7 @@ public abstract class AbstractOpsEpoModel extends
 		getLogger().info(
 				"Server Status: " + serverStatus
 						+ "\t Throttle Control Set to " + serviceLimit
-						+ " images per minute! \t Sleeping for " + (s / 1000)
+						+ " queries per minute! \t Sleeping for " + (s / 1000)
 						+ " seconds!");
 
 		Thread.sleep(s);
