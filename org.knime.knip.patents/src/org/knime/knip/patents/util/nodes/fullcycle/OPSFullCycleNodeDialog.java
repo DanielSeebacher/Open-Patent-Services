@@ -5,7 +5,7 @@ import org.knime.core.node.defaultnodesettings.DialogComponentString;
 import org.knime.knip.base.node.ValueToCellsNodeDialog;
 import org.knime.knip.patents.util.AbstractOpsEpoModel;
 
-public class OpsEpoFullCycleNodeDialog extends ValueToCellsNodeDialog<StringValue> {
+public class OPSFullCycleNodeDialog extends ValueToCellsNodeDialog<StringValue> {
 
 	@Override
 	public void addDialogComponents() {

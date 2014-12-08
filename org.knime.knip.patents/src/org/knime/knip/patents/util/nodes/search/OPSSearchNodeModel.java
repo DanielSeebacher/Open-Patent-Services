@@ -25,7 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class OpsEpoSearchNodeModel extends AbstractOpsEpoModel {
+public class OPSSearchNodeModel extends AbstractOpsEpoModel {
 
 	private static final int MAX_ALLOWED_PER_REQUEST = 100;
 
