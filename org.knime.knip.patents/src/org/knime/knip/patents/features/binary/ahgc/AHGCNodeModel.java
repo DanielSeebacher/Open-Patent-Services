@@ -65,33 +65,33 @@ public class AHGCNodeModel extends
 		ImgPlus<BitType> img = cellValue.getImgPlus();
 
 		// the first region is the whole image
-		List<IntervalView<BitType>> regions = new ArrayList<>();
-		regions.add(Views.interval(img, new long[] { img.min(0), img.min(1) },
-				new long[] { img.max(0), img.max(1) }));
+		List<Region> regions = new ArrayList<>();
+		regions.add(new Region(Views.interval(img,
+				new long[] { img.min(0), img.min(1) }, new long[] { img.max(0),
+						img.max(1) })));
 
 		// for each level
 		List<double[]> fv = new ArrayList<>();
 		for (int i = 0; i < m_levels.getIntValue(); i++) {
 
 			// calculate the centroid for each region
-			List<double[]> centroids = new ArrayList<>();
-			for (IntervalView<BitType> region : regions) {
+			List<Centroid> centroids = new ArrayList<>();
+			for (Region region : regions) {
 				centroids.add(getCentroid(region));
 			}
 
 			// centroid x,y are feature values. normalize.
-			for (double[] ds : centroids) {
-				double relative_x = ds[0] / img.dimension(0) * 100d;
-				double relative_y = ds[1] / img.dimension(1) * 100d;
+			for (Centroid centroid : centroids) {
+				double relative_x = (double) centroid.x / img.dimension(0);
+				double relative_y = (double) centroid.y / img.dimension(1);
 				fv.add(new double[] { relative_x, relative_y });
 			}
 
 			// divide each region into four subregions
-			List<IntervalView<BitType>> subregions = new ArrayList<>();
+			List<Region> subregions = new ArrayList<>();
 			for (int l = 0; l < regions.size(); l++) {
-				double[] centroid = centroids.get(l);
-				subregions.addAll(getSubRegions(regions.get(l),
-						(long) centroid[0], (long) centroid[1]));
+				Centroid centroid = centroids.get(l);
+				subregions.addAll(getSubRegions(regions.get(l), centroid));
 			}
 
 			// subregions are new regions.
@@ -119,26 +119,33 @@ public class AHGCNodeModel extends
 	 *            the y value of the centroid
 	 * @return the four subregions
 	 */
-	private List<IntervalView<BitType>> getSubRegions(
-			IntervalView<BitType> region, long cx, long cy) {
+	private List<Region> getSubRegions(Region region, Centroid centroid) {
 
-		List<IntervalView<BitType>> subregions = new ArrayList<>();
+		List<Region> subregions = new ArrayList<>();
 
 		// top left
-		subregions.add(Views.interval(region, new long[] { region.min(0),
-				region.min(1) }, new long[] { cx, cy }));
+		subregions.add(new Region(Views.interval(region.interval, new long[] {
+				region.interval.min(0), region.interval.min(1) }, new long[] {
+				centroid.x, centroid.y })));
 
 		// top right
-		subregions.add(Views.interval(region, new long[] { cx, region.min(1) },
-				new long[] { region.max(0), cy }));
+		subregions.add(new Region(Views.interval(region.interval, new long[] {
+				centroid.x, region.interval.min(1) }, new long[] {
+				region.interval.max(0), centroid.y })));
 
 		// bottom left
-		subregions.add(Views.interval(region, new long[] { region.min(0), cy },
-				new long[] { cx, region.max(1) }));
+		subregions.add(new Region(Views.interval(region.interval, new long[] {
+				region.interval.min(0), centroid.y }, new long[] { centroid.x,
+				region.interval.max(1) })));
 
 		// bottom right
-		subregions.add(Views.interval(region, new long[] { cx, cy },
-				new long[] { region.max(0), region.max(1) }));
+		subregions.add(new Region(Views.interval(region.interval, new long[] {
+				centroid.x, centroid.y }, new long[] { region.interval.max(0),
+				region.interval.max(1) })));
+
+		for (Region subregion : subregions) {
+			subregion.isEmpty();
+		}
 
 		return subregions;
 	}
@@ -151,12 +158,18 @@ public class AHGCNodeModel extends
 	 *            a region
 	 * @return the centroid of the region
 	 */
-	private double[] getCentroid(IntervalView<BitType> region) {
+	private Centroid getCentroid(Region region) {
+
+		// if we know that the region is empty, return center
+		if (region.isEmpty()) {
+			return getEmptyRegionCentroid(region);
+		}
+
 		double cx = 0;
 		double cy = 0;
 		double sum = 0;
 
-		Cursor<BitType> cursor = region.localizingCursor();
+		Cursor<BitType> cursor = region.interval.localizingCursor();
 		while (cursor.hasNext()) {
 			BitType next = cursor.next();
 			if (next.get() ^ m_whiteAsForeground.getBooleanValue()) {
@@ -168,16 +181,56 @@ public class AHGCNodeModel extends
 
 		// if a region is empty use the default centroid
 		if (sum == 0) {
-			return new double[] {
-					region.min(0) + (region.max(0) - region.min(0)) / 2,
-					region.min(1) + (region.max(1) - region.min(1)) / 2 };
+			region.setEmpty(true);
+			return getEmptyRegionCentroid(region);
 		}
 
-		return new double[] { cx / sum, cy / sum };
+		return new Centroid((long) (cx / sum), (long) (cy / sum));
+	}
+
+	public Centroid getEmptyRegionCentroid(Region region) {
+		if (!region.isEmpty()) {
+			throw new IllegalArgumentException("Region isn't empty");
+		}
+
+		return new Centroid(region.interval.min(0)
+				+ (region.interval.max(0) - region.interval.min(0)) / 2,
+				region.interval.min(1)
+						+ (region.interval.max(1) - region.interval.min(1)) / 2);
 	}
 
 	@Override
 	protected DataType getOutDataCellListCellType() {
 		return DoubleCell.TYPE;
+	}
+
+	private final class Region {
+
+		private final IntervalView<BitType> interval;
+		private boolean empty = false;
+
+		public Region(IntervalView<BitType> interval) {
+			this.interval = interval;
+		}
+
+		public boolean isEmpty() {
+			return empty;
+		}
+
+		public void setEmpty(boolean empty) {
+			this.empty = empty;
+		}
+	}
+
+	private final class Centroid {
+
+		private final long x;
+		private final long y;
+
+		public Centroid(long x, long y) {
+			this.x = x;
+			this.y = y;
+		}
+
 	}
 }

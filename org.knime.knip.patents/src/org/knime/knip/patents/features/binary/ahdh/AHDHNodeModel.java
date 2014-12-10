@@ -83,7 +83,7 @@ public class AHDHNodeModel extends
 
 		// for each level
 		List<Double> fv = new ArrayList<>();
-		for (int currentLevel = 0; currentLevel < m_levels.getIntValue(); currentLevel++) {
+		for (int currentLevel = 1; currentLevel <= m_levels.getIntValue(); currentLevel++) {
 
 			// calculate the centroid for each region
 			List<double[]> centroids = new ArrayList<>();
@@ -104,7 +104,16 @@ public class AHDHNodeModel extends
 
 				// use density or relative density
 				if (currentLevel < m_ld.getIntValue()) {
-					fv.addAll(calculateDensity(temp));
+
+					List<Double> calculateDensity = calculateDensity(temp);
+					for (Double double1 : calculateDensity) {
+						if (Double.isNaN(double1)) {
+							fv.add(0d);
+						} else {
+							fv.add(double1);
+						}
+					}
+
 				} else {
 					List<Double> calculateRelativeDensity = calculateRelativeDensity(temp);
 
@@ -121,10 +130,20 @@ public class AHDHNodeModel extends
 			}
 
 			// normalize histogram
-			for (int i = 0; i < histogram.length; i++) {
-				fv.add(histogram[i] / subregions.size());
-			}
+			if (currentLevel >= m_ld.getIntValue()) {
+				for (int i = 0; i < histogram.length; i++) {
 
+					double normalized = histogram[i]
+							/ (double) subregions.size();
+					if (Double.isNaN(normalized)) {
+						fv.add(0d);
+					} else {
+						fv.add(normalized);
+					}
+
+				}
+			}
+			
 			// subregions are new regions
 			regions = subregions;
 		}

@@ -17,14 +17,14 @@ import org.knime.core.data.collection.CollectionCellFactory;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.util.Pair;
-import org.knime.knip.patents.util.AbstractOpsEpoModel;
+import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class OPSFullCycleNodeModel extends
-		AbstractOpsEpoModel {
+		AbstractOPSModel {
 
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {

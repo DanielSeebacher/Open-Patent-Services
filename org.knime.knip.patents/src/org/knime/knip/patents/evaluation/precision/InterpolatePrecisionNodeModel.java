@@ -1,6 +1,7 @@
 package org.knime.knip.patents.evaluation.precision;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class InterpolatePrecisionNodeModel
 		extends
 		TwoValuesToCellNodeModel<CollectionDataValue, CollectionDataValue, ListCell> {
 
+
 	@Override
 	protected void addSettingsModels(List<SettingsModel> settingsModels) {
 		// no settings needed
@@ -34,49 +36,53 @@ public class InterpolatePrecisionNodeModel
 	protected ListCell compute(CollectionDataValue cellValue1,
 			CollectionDataValue cellValue2) throws Exception {
 
+		List<RecPrec> recPrecs = new ArrayList<>();
+
 		Iterator<DataCell> it1 = cellValue1.iterator();
 		Iterator<DataCell> it2 = cellValue2.iterator();
 
-		List<Double> precision = new ArrayList<>();
-		List<Double> recall = new ArrayList<>();
-
-		precision.add(1d);
-		recall.add(0d);
-
+		recPrecs.add(new RecPrec(0d, 1d));
 		while (it1.hasNext()) {
-
 			double currPrecision = ((DoubleCell) it1.next()).getDoubleValue();
 			double currRecall = ((DoubleCell) it2.next()).getDoubleValue();
 
-			int index = recall.indexOf(currRecall);
+			recPrecs.add(new RecPrec(currRecall, currPrecision));
+		}
 
-			if (index != -1) {
+		Collections.sort(recPrecs);
 
-				if (precision.get(index) < currPrecision) {
-					precision.set(index, currPrecision);
-				}
-
+		Collections.reverse(recPrecs);
+		
+		double maxPrecision = -1d;
+		Iterator<RecPrec> iterator = recPrecs.iterator();
+		while(iterator.hasNext()){
+			RecPrec next = iterator.next();
+			double currentPrecision = next.precision;
+			if(maxPrecision > currentPrecision){
+				next.precision = maxPrecision;
+			} else if(maxPrecision < currentPrecision){
+				maxPrecision = currentPrecision;
+			}
+		}
+		
+		Collections.reverse(recPrecs);
+		iterator = recPrecs.iterator();
+		Double currentRecall = -1d;
+		while (iterator.hasNext()) {
+			RecPrec next = iterator.next();
+			if (next.recall.equals(currentRecall)) {
+				iterator.remove();
 			} else {
-				recall.add(currRecall);
-				precision.add(currPrecision);
+				currentRecall = next.recall;
 			}
 		}
 
-		for (int i = 0; i < precision.size(); i++) {
-			for (int j = i; j < precision.size(); j++) {
-				if (precision.get(i) < precision.get(j)) {
-					precision.set(i, precision.get(j));
-				}
-			}
-		}
+		double[] precisionArr = new double[recPrecs.size()];
+		double[] recallArr = new double[recPrecs.size()];
 
-		double[] precisionArr = new double[precision.size()];
-		double[] recallArr = new double[recall.size()];
-
-		for (int i = 0; i < precision.size(); i++) {
-			precisionArr[i] = precision.get(i);
-			recallArr[i] = recall.get(i);
-
+		for (int i = 0; i < recPrecs.size(); i++) {
+			precisionArr[i] = recPrecs.get(i).precision;
+			recallArr[i] = recPrecs.get(i).recall;
 		}
 
 		LinearInterpolator li = new LinearInterpolator();
@@ -84,8 +90,11 @@ public class InterpolatePrecisionNodeModel
 				precisionArr);
 
 		List<DoubleCell> cells = new ArrayList<>();
-		for (double d = 0; d <= 1; d += 0.1) {
-			cells.add(new DoubleCell(interpolate.value(d)));
+		
+		for(int i = 0; i < 41; i++){
+			double d = i * 0.025d;
+			cells.add(new DoubleCell(interpolate.value(d)));	
+
 		}
 
 		return CollectionCellFactory.createListCell(cells);
@@ -94,5 +103,33 @@ public class InterpolatePrecisionNodeModel
 	@Override
 	protected DataType getOutDataCellListCellType() {
 		return DoubleCell.TYPE;
+	}
+
+	private final class RecPrec implements Comparable<RecPrec> {
+
+		private Double recall;
+		private Double precision;
+
+		public RecPrec(Double recall, Double precision) {
+			this.recall = recall;
+			this.precision = precision;
+		}
+
+		@Override
+		public int compareTo(RecPrec o) {
+
+			int i = this.recall.compareTo(o.recall);
+			if (i == 0) {
+				return (int) -Math
+						.signum(this.precision.compareTo(o.precision));
+			}
+
+			return i;
+		}
+
+		@Override
+		public String toString() {
+			return "[" + recall + "," + precision + "]";
+		}
 	}
 }

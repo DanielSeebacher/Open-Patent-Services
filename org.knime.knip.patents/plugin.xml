@@ -5,10 +5,10 @@
    <extension
          point="org.knime.workbench.repository.categories">
       <category
-            description="ops.epo.org Patent Services"
+            description="Open Patent Services"
             icon="icons/logo.png"
             level-id="patents"
-            name="EPO Patent Services"
+            name="OPS"
             path="/community/knip">
       </category>
    </extension>

@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,26 +20,27 @@ import org.knime.core.data.def.StringCell;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.util.Pair;
-import org.knime.knip.patents.util.AbstractOpsEpoModel;
+import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class OPSSearchNodeModel extends AbstractOpsEpoModel {
+public class OPSSearchNodeModel extends AbstractOPSModel {
 
 	private static final int MAX_ALLOWED_PER_REQUEST = 100;
 
 	static SettingsModelIntegerBounded createStartRangeModel() {
 		return new SettingsModelIntegerBounded("startRange", 1, 1,
-				Integer.MAX_VALUE);
+				1999);
 	}
 
 	static SettingsModelIntegerBounded createEndRangeModel() {
 		return new SettingsModelIntegerBounded("endRange", 50, 1,
-				Integer.MAX_VALUE);
+				2000);
 	}
-
+	
 	private final SettingsModelIntegerBounded m_startRange = createStartRangeModel();
 	private final SettingsModelIntegerBounded m_endRange = createEndRangeModel();
 
@@ -58,35 +60,42 @@ public class OPSSearchNodeModel extends AbstractOpsEpoModel {
 			String consumerSecret = m_consumerSecret.getStringValue();
 
 			String accessToken = null;
-			if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
-				accessToken = AccessTokenGenerator.getInstance()
-						.getAccessToken(consumerKey, consumerSecret);
-			}
+
+
+			int maxRange = m_endRange.getIntValue();
 
 			List<Patent> patentsList = new ArrayList<>();
-			for (int fromRange = m_startRange.getIntValue(); fromRange < m_endRange
-					.getIntValue(); fromRange += MAX_ALLOWED_PER_REQUEST) {
+			for (int fromRange = m_startRange.getIntValue(); fromRange < maxRange; fromRange += MAX_ALLOWED_PER_REQUEST) {
 				// build search url
-				URL queryURL = getQueryURL(
-						queryValue.getStringValue(),
-						fromRange,
-						Math.min(m_endRange.getIntValue(), (fromRange
-								+ MAX_ALLOWED_PER_REQUEST - 1)));
+				URL queryURL = getQueryURL(queryValue.getStringValue());
 
 				HttpURLConnection searchHttpConnection = (HttpURLConnection) queryURL
 						.openConnection();
 
+				searchHttpConnection.setRequestProperty(
+						"X-OPS-Range",
+						fromRange
+								+ "-"
+								+ Math.min(maxRange, (fromRange
+										+ MAX_ALLOWED_PER_REQUEST - 1)));
+				
+				if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
+					accessToken = AccessTokenGenerator.getInstance()
+							.getAccessToken(consumerKey, consumerSecret);
+				}
+				
 				// set accesstoken if available
 				if (accessToken != null) {
 					searchHttpConnection.setRequestProperty("Authorization",
 							"Bearer " + accessToken);
 				}
-
+				
 				// check html respone
 				try {
 					checkResponse(searchHttpConnection);
 				} catch (Exception e) {
-					getLogger().warn("Server returned error: ", e);
+					System.out.println(queryURL.toString());
+					getLogger().warn(e.getMessage(), e);
 					return new DataCell[] { new MissingCell(e.getMessage()) };
 				}
 
@@ -97,6 +106,12 @@ public class OPSSearchNodeModel extends AbstractOpsEpoModel {
 						.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				Document doc = db.parse(searchHttpConnection.getInputStream());
+
+				Element biblioSearchElement = (Element) doc
+						.getElementsByTagName("ops:biblio-search").item(0);
+				maxRange = Math.min(Integer.parseInt(biblioSearchElement
+						.getAttribute("total-result-count")), m_endRange
+						.getIntValue());
 
 				NodeList patentsNodeList = doc
 						.getElementsByTagName("document-id");
@@ -124,7 +139,6 @@ public class OPSSearchNodeModel extends AbstractOpsEpoModel {
 			for (Patent patent : patentsList) {
 				cells.add(new StringCell(patent.getCountry() + "."
 						+ patent.getDocnumber() + "." + patent.getKind()));
-
 			}
 			return new DataCell[] { CollectionCellFactory.createListCell(cells) };
 
@@ -134,11 +148,10 @@ public class OPSSearchNodeModel extends AbstractOpsEpoModel {
 
 	}
 
-	private URL getQueryURL(String query, int startRange, int endRange)
-			throws MalformedURLException {
+	private URL getQueryURL(String query) throws MalformedURLException {
 		return new URL(
 				"http://ops.epo.org/3.1/rest-services/published-data/search?q="
-						+ query + "&Range=" + startRange + "-" + endRange);
+						+ query);
 	}
 
 	@Override

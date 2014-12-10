@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * @author Daniel Seebacher, University of Konstanz
  * 
  */
-public abstract class AbstractOpsEpoModel extends
+public abstract class AbstractOPSModel extends
 		ValueToCellsNodeModel<StringValue> {
 
 	/**
@@ -159,6 +159,7 @@ public abstract class AbstractOpsEpoModel extends
 		String responseMessage = connection.getResponseMessage();
 
 		if (responseCode >= 400) {
+
 			throw new RuntimeException("Server returned error [" + responseCode
 					+ ", " + responseMessage + "]" + "\n Respone: \n"
 					+ parseErrorMessage(connection));
