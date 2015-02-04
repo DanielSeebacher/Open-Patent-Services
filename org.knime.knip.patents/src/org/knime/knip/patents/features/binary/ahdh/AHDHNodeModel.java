@@ -190,7 +190,7 @@ public class AHDHNodeModel extends
 		for (int i = 0; i < subregions.size(); i++) {
 			result[i] = (sumArea * pixels[i]) / (sumPixels * area[i]);
 			if (Double.isNaN(result[i])) {
-				result[i] = 0d;
+				result[i] = Double.POSITIVE_INFINITY;
 			}
 		}
 
