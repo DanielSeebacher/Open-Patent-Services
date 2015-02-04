@@ -16,17 +16,19 @@
 			pixels in the subregion vs pixels in the whole region is calculated.
 			These four ratios are then added to the feature vector.
 		</intro>
-		<option name="Num Levels">
-			Defines how many centroids should be calculated.
-			Careful as the number of centroids rises exponentially.
-		</option>
-		<option name="Relative Density Level">
-			Beginning with which level should the relative
-			density be calculated.
-		</option>
-		<option name="White as background?">
-			If white should be used as the background color.
-		</option>
+		<tab name="Options">
+			<option name="Num Levels">
+				Defines how many centroids should be calculated.
+				Careful as the number of centroids rises exponentially.
+			</option>
+			<option name="Relative Density Level">
+				Beginning with which level should the relative
+				density be calculated.
+			</option>
+			<option name="White as background?">
+				If white should be used as the background color.
+			</option>
+		</tab>
 	</fullDescription>
 
 	<ports>

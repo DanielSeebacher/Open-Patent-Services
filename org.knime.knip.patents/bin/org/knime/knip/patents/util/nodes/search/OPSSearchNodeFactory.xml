@@ -18,18 +18,18 @@
 			consumer key and consumer secret.
 		</intro>
 
+		<tab name="Options">
+			<option name="Consumer Key">
+				Consumer Key used for OAuth2 Authentication.
+			</option>
+			<option name="Consumer Secret">
+				Consumer Secret used for OAuth2 Authentication.
+			</option>
 
-		<option name="Consumer Key">
-			Consumer Key used for OAuth2 Authentication.
-		</option>
-		<option name="Consumer Secret">
-			Consumer Secret used for OAuth2 Authentication.
-		</option>
-
-		<option name="Query">
-			The search query.
-		</option>
-
+			<option name="Query">
+				The search query.
+			</option>
+		</tab>
 	</fullDescription>
 
 	<ports>

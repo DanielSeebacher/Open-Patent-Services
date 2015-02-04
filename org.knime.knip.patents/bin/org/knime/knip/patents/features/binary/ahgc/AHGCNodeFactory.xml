@@ -16,13 +16,15 @@
 			gets calculated again. The resulting feature vector consists of the x
 			and y values of the centroids.
 		</intro>
-		<option name="Num Levels">
-			Defines how many centroids should be calculated.
-			Careful as the number of centroids rises exponentially.
-		</option>
-		<option name="White as background?">
-			If white should be used as the background color.
-		</option>
+		<tab name="Options">
+			<option name="Num Levels">
+				Defines how many centroids should be calculated.
+				Careful as the number of centroids rises exponentially.
+			</option>
+			<option name="White as background?">
+				If white should be used as the background color.
+			</option>
+		</tab>
 	</fullDescription>
 
 	<ports>

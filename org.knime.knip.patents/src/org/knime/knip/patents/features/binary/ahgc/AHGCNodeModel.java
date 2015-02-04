@@ -3,8 +3,8 @@ package org.knime.knip.patents.features.binary.ahgc;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.imagej.ImgPlus;
 import net.imglib2.Cursor;
-import net.imglib2.meta.ImgPlus;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
@@ -21,9 +21,9 @@ import org.knime.knip.base.node.ValueToCellNodeModel;
 
 /**
  * Adaptive Hierarchical Geometric Centroids
- * 
+ *
  * @author Daniel Seebacher, University of Konstanz
- * 
+ *
  * @see Mai Yang, Guoping Qiu, Jiwu Huang, Dave Elliman,
  *      "Near-Duplicate Image Recognition and Content-based Image Retrieval using Adaptive Hierarchical Geometric Centroids,"
  *      Pattern Recognition, International Conference on, pp. 958-961, 18th
@@ -33,7 +33,7 @@ public class AHGCNodeModel extends
 		ValueToCellNodeModel<ImgPlusValue<BitType>, ListCell> {
 
 	/**
-	 * 
+	 *
 	 * @return The SettingsModel for the Levels
 	 */
 	static SettingsModelIntegerBounded createLevelModel() {
@@ -42,7 +42,7 @@ public class AHGCNodeModel extends
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The SettingsModel to use white as the background color.
 	 */
 	static SettingsModelBoolean createWhiteAsBackgroundModel() {
@@ -53,16 +53,16 @@ public class AHGCNodeModel extends
 	private final SettingsModelBoolean m_whiteAsForeground = createWhiteAsBackgroundModel();
 
 	@Override
-	protected void addSettingsModels(List<SettingsModel> settingsModels) {
-		settingsModels.add(m_levels);
-		settingsModels.add(m_whiteAsForeground);
+	protected void addSettingsModels(final List<SettingsModel> settingsModels) {
+		settingsModels.add(this.m_levels);
+		settingsModels.add(this.m_whiteAsForeground);
 	}
 
 	@Override
-	protected ListCell compute(ImgPlusValue<BitType> cellValue)
+	protected ListCell compute(final ImgPlusValue<BitType> cellValue)
 			throws Exception {
 
-		ImgPlus<BitType> img = cellValue.getImgPlus();
+		final ImgPlus<BitType> img = cellValue.getImgPlus();
 
 		// the first region is the whole image
 		List<Region> regions = new ArrayList<>();
@@ -71,26 +71,28 @@ public class AHGCNodeModel extends
 						img.max(1) })));
 
 		// for each level
-		List<double[]> fv = new ArrayList<>();
-		for (int i = 0; i < m_levels.getIntValue(); i++) {
+		final List<double[]> fv = new ArrayList<>();
+		for (int i = 0; i < this.m_levels.getIntValue(); i++) {
 
 			// calculate the centroid for each region
-			List<Centroid> centroids = new ArrayList<>();
-			for (Region region : regions) {
+			final List<Centroid> centroids = new ArrayList<>();
+			for (final Region region : regions) {
 				centroids.add(getCentroid(region));
 			}
 
 			// centroid x,y are feature values. normalize.
-			for (Centroid centroid : centroids) {
-				double relative_x = (double) centroid.x / img.dimension(0);
-				double relative_y = (double) centroid.y / img.dimension(1);
+			for (final Centroid centroid : centroids) {
+				final double relative_x = (double) centroid.x
+						/ img.dimension(0);
+				final double relative_y = (double) centroid.y
+						/ img.dimension(1);
 				fv.add(new double[] { relative_x, relative_y });
 			}
 
 			// divide each region into four subregions
-			List<Region> subregions = new ArrayList<>();
+			final List<Region> subregions = new ArrayList<>();
 			for (int l = 0; l < regions.size(); l++) {
-				Centroid centroid = centroids.get(l);
+				final Centroid centroid = centroids.get(l);
 				subregions.addAll(getSubRegions(regions.get(l), centroid));
 			}
 
@@ -98,9 +100,9 @@ public class AHGCNodeModel extends
 			regions = subregions;
 		}
 
-		List<DoubleCell> cells = new ArrayList<>();
+		final List<DoubleCell> cells = new ArrayList<>();
 		for (int i = 0; i < fv.size(); i++) {
-			double[] centroid = fv.get(i);
+			final double[] centroid = fv.get(i);
 			cells.add(new DoubleCell(centroid[0]));
 			cells.add(new DoubleCell(centroid[1]));
 		}
@@ -110,7 +112,7 @@ public class AHGCNodeModel extends
 
 	/**
 	 * Divides one region into four subregions using the centroid.
-	 * 
+	 *
 	 * @param region
 	 *            a region
 	 * @param cx
@@ -119,9 +121,10 @@ public class AHGCNodeModel extends
 	 *            the y value of the centroid
 	 * @return the four subregions
 	 */
-	private List<Region> getSubRegions(Region region, Centroid centroid) {
+	private List<Region> getSubRegions(final Region region,
+			final Centroid centroid) {
 
-		List<Region> subregions = new ArrayList<>();
+		final List<Region> subregions = new ArrayList<>();
 
 		// top left
 		subregions.add(new Region(Views.interval(region.interval, new long[] {
@@ -143,7 +146,7 @@ public class AHGCNodeModel extends
 				centroid.x, centroid.y }, new long[] { region.interval.max(0),
 				region.interval.max(1) })));
 
-		for (Region subregion : subregions) {
+		for (final Region subregion : subregions) {
 			subregion.isEmpty();
 		}
 
@@ -153,12 +156,12 @@ public class AHGCNodeModel extends
 	/**
 	 * Calculates the centroid for a region. If the region is empty use center
 	 * of the region.
-	 * 
+	 *
 	 * @param region
 	 *            a region
 	 * @return the centroid of the region
 	 */
-	private Centroid getCentroid(Region region) {
+	private Centroid getCentroid(final Region region) {
 
 		// if we know that the region is empty, return center
 		if (region.isEmpty()) {
@@ -169,10 +172,10 @@ public class AHGCNodeModel extends
 		double cy = 0;
 		double sum = 0;
 
-		Cursor<BitType> cursor = region.interval.localizingCursor();
+		final Cursor<BitType> cursor = region.interval.localizingCursor();
 		while (cursor.hasNext()) {
-			BitType next = cursor.next();
-			if (next.get() ^ m_whiteAsForeground.getBooleanValue()) {
+			final BitType next = cursor.next();
+			if (next.get() ^ this.m_whiteAsForeground.getBooleanValue()) {
 				cx += cursor.getLongPosition(0);
 				cy += cursor.getLongPosition(1);
 				sum++;
@@ -188,15 +191,16 @@ public class AHGCNodeModel extends
 		return new Centroid((long) (cx / sum), (long) (cy / sum));
 	}
 
-	public Centroid getEmptyRegionCentroid(Region region) {
+	public Centroid getEmptyRegionCentroid(final Region region) {
 		if (!region.isEmpty()) {
 			throw new IllegalArgumentException("Region isn't empty");
 		}
 
-		return new Centroid(region.interval.min(0)
-				+ (region.interval.max(0) - region.interval.min(0)) / 2,
+		return new Centroid(
+				region.interval.min(0)
+						+ ((region.interval.max(0) - region.interval.min(0)) / 2),
 				region.interval.min(1)
-						+ (region.interval.max(1) - region.interval.min(1)) / 2);
+						+ ((region.interval.max(1) - region.interval.min(1)) / 2));
 	}
 
 	@Override
@@ -209,15 +213,15 @@ public class AHGCNodeModel extends
 		private final IntervalView<BitType> interval;
 		private boolean empty = false;
 
-		public Region(IntervalView<BitType> interval) {
+		public Region(final IntervalView<BitType> interval) {
 			this.interval = interval;
 		}
 
 		public boolean isEmpty() {
-			return empty;
+			return this.empty;
 		}
 
-		public void setEmpty(boolean empty) {
+		public void setEmpty(final boolean empty) {
 			this.empty = empty;
 		}
 	}
@@ -227,7 +231,7 @@ public class AHGCNodeModel extends
 		private final long x;
 		private final long y;
 
-		public Centroid(long x, long y) {
+		public Centroid(final long x, final long y) {
 			this.x = x;
 			this.y = y;
 		}

@@ -17,17 +17,21 @@
 			authentication, if the
 			user has a valid consumer key and consumer secret.
 		</intro>
-		<option name="Consumer Key">
-			Consumer Key used for OAuth2 Authentication.
-		</option>
-		<option name="Consumer Secret">
-			Consumer Secret used for OAuth2 Authentication.
-		</option>
+		<tab name="Options">
+			<option name="Consumer Key">
+				Consumer Key used for OAuth2 Authentication.
+			</option>
+			<option name="Consumer Secret">
+				Consumer Secret used for OAuth2 Authentication.
+			</option>
 
-		<option name="Patent ID">
-			The Patent ID consisting of Country.DocNumber.Kind
-			(docdb format).
-		</option>
+			<option name="Patent ID">
+				The Patent ID consisting of Country.DocNumber.Kind
+				(docdb format).
+			</option>
+		</tab>
+
+
 	</fullDescription>
 
 	<ports>
