@@ -12,8 +12,8 @@ Require-Bundle: org.knime.base,
  org.knime.knip.base;bundle-version="[1.0.1,2.0.0)",
  org.knime.knip.core;bundle-version="[1.0.1,2.0.0)",
  imglib2;bundle-version="2.2.0",
- imagej-common;bundle-version="0.12.1",
- org.apache.commons.math3;bundle-version="3.2.0"
+ org.apache.commons.math3;bundle-version="3.2.0",
+ imagej-common;bundle-version="0.12.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: patents.jar
 Bundle-ActivationPolicy: lazy
