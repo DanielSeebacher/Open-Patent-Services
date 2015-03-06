@@ -3,7 +3,7 @@ Bundle-SymbolicName: org.knime.knip.patents;singleton:=true
 Bundle-ManifestVersion: 2
 Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: University of Konstanz
-Eclipse-RegisterBuddy: org.knime.core
+Eclipse-RegisterBuddy: org.knime.knip.io
 Require-Bundle: org.knime.base,
  org.knime.workbench.repository,
  org.apache.log4j;bundle-version="1.2.15",
@@ -14,10 +14,15 @@ Require-Bundle: org.knime.base,
  imglib2;bundle-version="2.2.0",
  org.apache.commons.math3;bundle-version="3.2.0",
  imagej-common;bundle-version="0.12.0",
- scijava-common;bundle-version="2.38.0"
+ scijava-common;bundle-version="2.38.0",
+ org.knime.knip.io;bundle-version="1.3.0",
+ scifio;bundle-version="0.21.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: patents.jar
+Bundle-ClassPath: patents.jar,
+ lib/jai_codec.jar,
+ lib/jai_core-1.1.3.jar
 Bundle-ActivationPolicy: lazy
-Export-Package: org.knime.knip.patents.features
+Export-Package: org.knime.knip.patents.features,
+ org.knime.knip.patents.formats
 Import-Package: net.imagej;version="0.12.0",
  net.imglib2.meta
