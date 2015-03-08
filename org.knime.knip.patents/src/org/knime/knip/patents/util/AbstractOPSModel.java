@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.knime.core.data.StringValue;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
@@ -32,6 +33,9 @@ import org.xml.sax.SAXException;
  */
 public abstract class AbstractOPSModel extends
 		ValueToCellsNodeModel<StringValue> {
+
+	private static final NodeLogger LOGGER = NodeLogger
+			.getLogger(AbstractOPSModel.class);
 
 	/**
 	 * 
@@ -121,8 +125,9 @@ public abstract class AbstractOPSModel extends
 							.split("[^\\d]")[0]);
 		} catch (Exception e) {
 			serviceLimit = 5;
-			getLogger().warn(
-					"Couldn't retrieve server status, sleep for a few seconds");
+			LOGGER.warn(
+					"Couldn't retrieve server status, sleep for a few seconds. "
+							+ e.getMessage(), e);
 		}
 
 		if (serviceLimit == 0) {
@@ -130,13 +135,12 @@ public abstract class AbstractOPSModel extends
 		}
 
 		int s = 60000 / serviceLimit;
-		getLogger().info(
-				"Server Status: " + serverStatus
-						+ "\t Throttle Control Set to " + serviceLimit
-						+ " queries per minute! \t Sleeping for " + (s / 1000)
-						+ " seconds!");
+		LOGGER.debug("Server Status: " + serverStatus
+				+ "\t Throttle Control Set to " + serviceLimit
+				+ " queries per minute! \t Sleeping for " + (s / 1000)
+				+ " seconds!");
 
-//		Thread.sleep(s);
+		Thread.sleep(s);
 	}
 
 	/**

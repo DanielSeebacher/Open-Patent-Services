@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +16,7 @@ import org.knime.core.data.StringValue;
 import org.knime.core.data.collection.CollectionCellFactory;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.util.Pair;
@@ -24,23 +24,22 @@ import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class OPSSearchNodeModel extends AbstractOPSModel {
 
+	private static final NodeLogger LOGGER = NodeLogger
+			.getLogger(OPSSearchNodeModel.class);
 	private static final int MAX_ALLOWED_PER_REQUEST = 100;
 
 	static SettingsModelIntegerBounded createStartRangeModel() {
-		return new SettingsModelIntegerBounded("startRange", 1, 1,
-				1999);
+		return new SettingsModelIntegerBounded("startRange", 1, 1, 1999);
 	}
 
 	static SettingsModelIntegerBounded createEndRangeModel() {
-		return new SettingsModelIntegerBounded("endRange", 50, 1,
-				2000);
+		return new SettingsModelIntegerBounded("endRange", 50, 1, 2000);
 	}
-	
+
 	private final SettingsModelIntegerBounded m_startRange = createStartRangeModel();
 	private final SettingsModelIntegerBounded m_endRange = createEndRangeModel();
 
@@ -61,7 +60,6 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 
 			String accessToken = null;
 
-
 			int maxRange = m_endRange.getIntValue();
 
 			List<Patent> patentsList = new ArrayList<>();
@@ -78,24 +76,25 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 								+ "-"
 								+ Math.min(maxRange, (fromRange
 										+ MAX_ALLOWED_PER_REQUEST - 1)));
-				
+
 				if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
 					accessToken = AccessTokenGenerator.getInstance()
 							.getAccessToken(consumerKey, consumerSecret);
 				}
-				
+
 				// set accesstoken if available
 				if (accessToken != null) {
 					searchHttpConnection.setRequestProperty("Authorization",
 							"Bearer " + accessToken);
 				}
-				
+
 				// check html respone
 				try {
 					checkResponse(searchHttpConnection);
 				} catch (Exception e) {
-					System.out.println(queryURL.toString());
-					getLogger().warn(e.getMessage(), e);
+					LOGGER.warn(
+							"Server returned error before parsing: "
+									+ e.getMessage(), e);
 					return new DataCell[] { new MissingCell(e.getMessage()) };
 				}
 

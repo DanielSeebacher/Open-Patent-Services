@@ -16,6 +16,7 @@ import org.knime.core.data.StringValue;
 import org.knime.core.data.collection.CollectionCellFactory;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.util.Pair;
 import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
@@ -26,6 +27,9 @@ import org.w3c.dom.NodeList;
 public class OPSFullCycleNodeModel extends
 		AbstractOPSModel {
 
+	private static final NodeLogger LOGGER = NodeLogger
+			.getLogger(OPSFullCycleNodeModel.class);
+	
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
 		try {
@@ -54,7 +58,7 @@ public class OPSFullCycleNodeModel extends
 			try {
 				checkResponse(fullCycleHttpConnection);
 			} catch (Exception e) {
-				getLogger().warn("Server returned error before parsing: " + e.getMessage(), e);
+				LOGGER.warn("Server returned error before parsing: " + e.getMessage(), e);
 				return new DataCell[] { new MissingCell(e.getMessage()),
 						new MissingCell(e.getMessage()),
 						new MissingCell(e.getMessage()),
@@ -178,7 +182,7 @@ public class OPSFullCycleNodeModel extends
 			return cells;
 
 		} catch (Exception e) {
-			getLogger().warn(
+			LOGGER.warn(
 					"Server returned during parsing: " + e.getMessage(), e);
 			return new DataCell[] { new MissingCell(e.getMessage()),
 					new MissingCell(e.getMessage()),

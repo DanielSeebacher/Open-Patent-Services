@@ -20,6 +20,7 @@ import org.knime.core.data.StringValue;
 import org.knime.core.data.collection.CollectionCellFactory;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.util.Pair;
 import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
@@ -27,8 +28,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class OPSImagesNodeModel extends
-		AbstractOPSModel {
+public class OPSImagesNodeModel extends AbstractOPSModel {
+
+	private static final NodeLogger LOGGER = NodeLogger
+			.getLogger(OPSImagesNodeModel.class);
 
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
@@ -59,7 +62,7 @@ public class OPSImagesNodeModel extends
 			try {
 				checkResponse(imageOverviewHttpConnection);
 			} catch (Exception e) {
-				getLogger().warn("Server returned error: ", e);
+				LOGGER.warn("Server returned error: " + e.getMessage(), e);
 				return new DataCell[] { new MissingCell(e.getMessage()) };
 			}
 
@@ -108,7 +111,9 @@ public class OPSImagesNodeModel extends
 						try {
 							checkResponse(absoluteImageHttpConnection);
 						} catch (Exception e) {
-							getLogger().warn("Server returned error: ", e);
+							LOGGER.warn(
+									"Server returned error: " + e.getMessage(),
+									e);
 							return new DataCell[] { new MissingCell(
 									e.getMessage()) };
 						}
@@ -125,6 +130,7 @@ public class OPSImagesNodeModel extends
 						fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 						pathToImages.add(new StringCell(imgFile
 								.getAbsolutePath()));
+						fos.close();
 					}
 				}
 			}
@@ -132,7 +138,7 @@ public class OPSImagesNodeModel extends
 			return new DataCell[] { CollectionCellFactory
 					.createListCell(pathToImages) };
 		} catch (Exception e) {
-			getLogger().warn("Other error: ", e);
+			LOGGER.warn("Other error: " + e.getMessage(), e);
 			return new DataCell[] { new MissingCell(e.getMessage()) };
 		}
 
