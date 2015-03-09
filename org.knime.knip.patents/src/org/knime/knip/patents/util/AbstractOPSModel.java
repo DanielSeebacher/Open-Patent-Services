@@ -140,7 +140,8 @@ public abstract class AbstractOPSModel extends
 				+ " queries per minute! \t Sleeping for " + (s / 1000)
 				+ " seconds!");
 
-		Thread.sleep(s);
+		// ignore sleep, alexander is whitelisted
+		// Thread.sleep(s);
 	}
 
 	/**
