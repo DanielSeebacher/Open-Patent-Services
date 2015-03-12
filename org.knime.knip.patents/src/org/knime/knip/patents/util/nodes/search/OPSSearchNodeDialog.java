@@ -1,6 +1,7 @@
 package org.knime.knip.patents.util.nodes.search;
 
 import org.knime.core.data.StringValue;
+import org.knime.core.node.defaultnodesettings.DialogComponentBoolean;
 import org.knime.core.node.defaultnodesettings.DialogComponentNumber;
 import org.knime.core.node.defaultnodesettings.DialogComponentString;
 import org.knime.knip.base.node.ValueToCellsNodeDialog;
@@ -10,15 +11,22 @@ public class OPSSearchNodeDialog extends ValueToCellsNodeDialog<StringValue> {
 
 	@Override
 	public void addDialogComponents() {
+
 		addDialogComponent(
 				"Options",
-				"OAuth2 Settings",
+				"Connection Settings",
+				new DialogComponentBoolean(AbstractOPSModel
+						.createUseThrottleControlModel(), "Throttling"));
+
+		addDialogComponent(
+				"Options",
+				"Connection Settings",
 				new DialogComponentString(AbstractOPSModel
 						.createConsumerKeyModel(), "Consumer Key"));
 
 		addDialogComponent(
 				"Options",
-				"OAuth2 Settings",
+				"Connection Settings",
 				new DialogComponentString(AbstractOPSModel
 						.createConsumerSecretModel(), "Consumer Secret"));
 

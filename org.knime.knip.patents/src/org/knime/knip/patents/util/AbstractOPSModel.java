@@ -19,6 +19,7 @@ import org.knime.core.data.StringValue;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.knip.base.node.ValueToCellsNodeModel;
 import org.w3c.dom.Document;
@@ -39,6 +40,14 @@ public abstract class AbstractOPSModel extends
 
 	/**
 	 * 
+	 * @return throttle control model
+	 */
+	public static SettingsModelBoolean createUseThrottleControlModel() {
+		return new SettingsModelBoolean("m_useThrottleControl", true);
+	}
+
+	/**
+	 * 
 	 * @return consumer key model
 	 */
 	public static SettingsModelString createConsumerKeyModel() {
@@ -53,11 +62,13 @@ public abstract class AbstractOPSModel extends
 		return new SettingsModelString("m_consumerSecret", "");
 	}
 
+	protected final SettingsModelBoolean m_useThrottleControl = createUseThrottleControlModel();
 	protected final SettingsModelString m_consumerKey = createConsumerKeyModel();
 	protected final SettingsModelString m_consumerSecret = createConsumerSecretModel();
 
 	@Override
 	protected void addSettingsModels(List<SettingsModel> settingsModels) {
+		settingsModels.add(m_useThrottleControl);
 		settingsModels.add(m_consumerKey);
 		settingsModels.add(m_consumerSecret);
 	}
@@ -99,7 +110,8 @@ public abstract class AbstractOPSModel extends
 
 	/**
 	 * The ops.epo.org REST services have a minutely limit. Check this limit and
-	 * Thread.sleep() for the required amount of seconds.
+	 * Thread.sleep() for the required amount of seconds. If throttling is
+	 * disabled, do nothing.
 	 * 
 	 * @param connection
 	 *            an {@link HttpURLConnection} to one of the REST services.
@@ -111,6 +123,10 @@ public abstract class AbstractOPSModel extends
 	 */
 	protected void throttle(HttpURLConnection connection, String field)
 			throws InterruptedException {
+
+		if (!m_useThrottleControl.getBooleanValue()) {
+			return;
+		}
 
 		String serverStatus = "unknown";
 		int serviceLimit = 0;
@@ -140,8 +156,7 @@ public abstract class AbstractOPSModel extends
 				+ " queries per minute! \t Sleeping for " + (s / 1000)
 				+ " seconds!");
 
-		// ignore sleep, alexander is whitelisted
-		// Thread.sleep(s);
+		Thread.sleep(s);
 	}
 
 	/**
