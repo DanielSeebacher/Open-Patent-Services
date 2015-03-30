@@ -18,6 +18,7 @@ import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.util.Pair;
+import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;
@@ -34,8 +35,8 @@ public class OPSFullCycleNodeModel extends
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
 		try {
 			// check if we need to get an access token
-			String consumerKey = m_consumerKey.getStringValue();
-			String consumerSecret = m_consumerSecret.getStringValue();
+			String consumerKey = KNIMEOPSPlugin.getOAuth2ConsumerKey();
+			String consumerSecret = KNIMEOPSPlugin.getOAuth2ConsumerSecret();
 
 			String accessToken = null;
 			if (consumerKey.length() > 0 && consumerSecret.length() > 0) {

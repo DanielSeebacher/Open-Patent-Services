@@ -20,6 +20,7 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.util.Pair;
+import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;
@@ -55,8 +56,8 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 	protected DataCell[] compute(StringValue queryValue) throws Exception {
 		try {
 			// check if we need to get an access token
-			String consumerKey = m_consumerKey.getStringValue();
-			String consumerSecret = m_consumerSecret.getStringValue();
+			String consumerKey = KNIMEOPSPlugin.getOAuth2ConsumerKey();
+			String consumerSecret = KNIMEOPSPlugin.getOAuth2ConsumerSecret();
 
 			String accessToken = null;
 

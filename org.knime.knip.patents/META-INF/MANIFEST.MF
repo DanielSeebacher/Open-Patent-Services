@@ -26,3 +26,4 @@ Export-Package: org.knime.knip.patents.features,
  org.knime.knip.patents.formats
 Import-Package: net.imagej;version="0.12.0",
  net.imglib2.meta
+Bundle-Activator: org.knime.knip.patents.KNIMEOPSPlugin

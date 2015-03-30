@@ -5,12 +5,17 @@ import org.knime.knip.base.node.ValueToCellsNodeDialog;
 import org.knime.knip.base.node.ValueToCellsNodeFactory;
 import org.knime.knip.base.node.ValueToCellsNodeModel;
 
-public class OPSImagesNodeFactory extends
-		ValueToCellsNodeFactory<StringValue> {
+public class OPSImagesNodeFactory extends ValueToCellsNodeFactory<StringValue> {
 
 	@Override
 	protected ValueToCellsNodeDialog<StringValue> createNodeDialog() {
-		return new OPSImagesNodeDialog();
+		return new ValueToCellsNodeDialog<StringValue>() {
+			@Override
+			public void addDialogComponents() {
+				// TODO Auto-generated method stub
+
+			}
+		};
 	}
 
 	@Override

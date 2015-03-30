@@ -10,7 +10,13 @@ public class OPSFullCycleNodeFactory extends
 
 	@Override
 	protected ValueToCellsNodeDialog<StringValue> createNodeDialog() {
-		return new OPSFullCycleNodeDialog();
+		return new ValueToCellsNodeDialog<StringValue>() {
+			@Override
+			public void addDialogComponents() {
+				// TODO Auto-generated method stub
+
+			}
+		};
 	}
 
 	@Override

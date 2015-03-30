@@ -19,9 +19,8 @@ import org.knime.core.data.StringValue;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
-import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
-import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.knip.base.node.ValueToCellsNodeModel;
+import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -39,38 +38,11 @@ public abstract class AbstractOPSModel extends
 			.getLogger(AbstractOPSModel.class);
 
 	/**
-	 * 
-	 * @return throttle control model
+	 * Override this method if you need additional SettingsModel in subclasses
 	 */
-	public static SettingsModelBoolean createUseThrottleControlModel() {
-		return new SettingsModelBoolean("m_useThrottleControl", true);
-	}
-
-	/**
-	 * 
-	 * @return consumer key model
-	 */
-	public static SettingsModelString createConsumerKeyModel() {
-		return new SettingsModelString("m_consumerKey", "");
-	}
-
-	/**
-	 * 
-	 * @return consumer secret model
-	 */
-	public static SettingsModelString createConsumerSecretModel() {
-		return new SettingsModelString("m_consumerSecret", "");
-	}
-
-	protected final SettingsModelBoolean m_useThrottleControl = createUseThrottleControlModel();
-	protected final SettingsModelString m_consumerKey = createConsumerKeyModel();
-	protected final SettingsModelString m_consumerSecret = createConsumerSecretModel();
-
 	@Override
 	protected void addSettingsModels(List<SettingsModel> settingsModels) {
-		settingsModels.add(m_useThrottleControl);
-		settingsModels.add(m_consumerKey);
-		settingsModels.add(m_consumerSecret);
+
 	}
 
 	/**
@@ -124,7 +96,7 @@ public abstract class AbstractOPSModel extends
 	protected void throttle(HttpURLConnection connection, String field)
 			throws InterruptedException {
 
-		if (!m_useThrottleControl.getBooleanValue()) {
+		if (!KNIMEOPSPlugin.isThrottlingEnabled()) {
 			return;
 		}
 
