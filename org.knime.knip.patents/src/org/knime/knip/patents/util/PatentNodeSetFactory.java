@@ -9,6 +9,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
 import org.knime.knip.patents.util.nodes.claims.OPSClaimsNodeFactory;
+import org.knime.knip.patents.util.nodes.description.OPSDescriptionNodeFactory;
 import org.knime.knip.patents.util.nodes.drawings.OPSImagesNodeFactory;
 import org.knime.knip.patents.util.nodes.fullcycle.OPSFullCycleNodeFactory;
 import org.knime.knip.patents.util.nodes.search.OPSSearchNodeFactory;
@@ -75,6 +76,8 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 		m_nodeFactories.put(OPSSearchNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
 		m_nodeFactories.put(OPSClaimsNodeFactory.class.getCanonicalName(),
+				"/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OPSDescriptionNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
 		
 		return m_nodeFactories.keySet();
