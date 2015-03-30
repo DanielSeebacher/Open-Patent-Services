@@ -3,6 +3,8 @@ package org.knime.knip.patents.util;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -14,6 +16,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
 import org.knime.core.data.StringValue;
 import org.knime.core.node.NodeLogger;
@@ -36,7 +40,14 @@ public abstract class AbstractOPSModel extends
 
 	private static final NodeLogger LOGGER = NodeLogger
 			.getLogger(AbstractOPSModel.class);
+	
+	private final XPath xpath;
 
+	public AbstractOPSModel() {
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		this.xpath = xPathfactory.newXPath();
+	}
+	
 	/**
 	 * Override this method if you need additional SettingsModel in subclasses
 	 */
@@ -156,5 +167,11 @@ public abstract class AbstractOPSModel extends
 					+ ", " + responseMessage + "]" + "\n Respone: \n"
 					+ parseErrorMessage(connection));
 		}
+	}
+
+	public abstract URL getURL(String input) throws MalformedURLException;
+	
+	protected XPath getXPath(){
+		return xpath;
 	}
 }

@@ -25,12 +25,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class OPSFullCycleNodeModel extends
-		AbstractOPSModel {
+public class OPSFullCycleNodeModel extends AbstractOPSModel {
 
 	private static final NodeLogger LOGGER = NodeLogger
 			.getLogger(OPSFullCycleNodeModel.class);
-	
+
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
 		try {
@@ -45,7 +44,7 @@ public class OPSFullCycleNodeModel extends
 			}
 
 			// create URL and HttpURLConnection
-			URL fullCycleURL = getFullCycleURL(patentIDValue.getStringValue());
+			URL fullCycleURL = getURL(patentIDValue.getStringValue());
 			HttpURLConnection fullCycleHttpConnection = (HttpURLConnection) fullCycleURL
 					.openConnection();
 
@@ -59,7 +58,9 @@ public class OPSFullCycleNodeModel extends
 			try {
 				checkResponse(fullCycleHttpConnection);
 			} catch (Exception e) {
-				LOGGER.warn("Server returned error before parsing: " + e.getMessage(), e);
+				LOGGER.warn(
+						"Server returned error before parsing: "
+								+ e.getMessage(), e);
 				return new DataCell[] { new MissingCell(e.getMessage()),
 						new MissingCell(e.getMessage()),
 						new MissingCell(e.getMessage()),
@@ -183,8 +184,7 @@ public class OPSFullCycleNodeModel extends
 			return cells;
 
 		} catch (Exception e) {
-			LOGGER.warn(
-					"Server returned during parsing: " + e.getMessage(), e);
+			LOGGER.warn("Server returned during parsing: " + e.getMessage(), e);
 			return new DataCell[] { new MissingCell(e.getMessage()),
 					new MissingCell(e.getMessage()),
 					new MissingCell(e.getMessage()),
@@ -193,10 +193,11 @@ public class OPSFullCycleNodeModel extends
 		}
 	}
 
-	private URL getFullCycleURL(String patentID) throws MalformedURLException {
+	@Override
+	public URL getURL(String input) throws MalformedURLException {
 		return new URL(
 				"http://ops.epo.org/3.1/rest-services/published-data/publication/docdb/"
-						+ patentID + "/full-cycle");
+						+ input + "/full-cycle");
 	}
 
 	@Override

@@ -34,8 +34,11 @@ public class OPSImagesNodeModel extends AbstractOPSModel {
 	private static final NodeLogger LOGGER = NodeLogger
 			.getLogger(OPSImagesNodeModel.class);
 
+
+
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
+
 		try {
 			// check if we need to get an access token
 			String consumerKey = KNIMEOPSPlugin.getOAuth2ConsumerKey();
@@ -48,8 +51,7 @@ public class OPSImagesNodeModel extends AbstractOPSModel {
 			}
 
 			// create URL and HttpURLConnection
-			URL imageOverviewURL = getImageOverviewURL(patentIDValue
-					.getStringValue());
+			URL imageOverviewURL = getURL(patentIDValue.getStringValue());
 			HttpURLConnection imageOverviewHttpConnection = (HttpURLConnection) imageOverviewURL
 					.openConnection();
 
@@ -160,10 +162,10 @@ public class OPSImagesNodeModel extends AbstractOPSModel {
 				+ ".tiff?Range=" + i);
 	}
 
-	private URL getImageOverviewURL(String patentID)
-			throws MalformedURLException {
+	@Override
+	public URL getURL(String input) throws MalformedURLException {
 		return new URL(
 				"http://ops.epo.org/3.1/rest-services/published-data/publication/docdb/"
-						+ patentID + "/images");
+						+ input + "/images");
 	}
 }

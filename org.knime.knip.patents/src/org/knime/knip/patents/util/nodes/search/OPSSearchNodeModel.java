@@ -66,7 +66,7 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 			List<Patent> patentsList = new ArrayList<>();
 			for (int fromRange = m_startRange.getIntValue(); fromRange < maxRange; fromRange += MAX_ALLOWED_PER_REQUEST) {
 				// build search url
-				URL queryURL = getQueryURL(queryValue.getStringValue());
+				URL queryURL = getURL(queryValue.getStringValue());
 
 				HttpURLConnection searchHttpConnection = (HttpURLConnection) queryURL
 						.openConnection();
@@ -148,10 +148,11 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 
 	}
 
-	private URL getQueryURL(String query) throws MalformedURLException {
+	@Override
+	public URL getURL(String input) throws MalformedURLException {
 		return new URL(
 				"http://ops.epo.org/3.1/rest-services/published-data/search?q="
-						+ query);
+						+ input);
 	}
 
 	@Override
