@@ -42,4 +42,12 @@
             id="org.knime.knip.patents.util.PatentNodeSetFactory">
       </nodeset>
    </extension>
+   <extension
+         point="org.knime.workbench.repository.nodes">
+      <node
+            expert-flag="false"
+            factory-class="org.knime.knip.patents.features.meta.fishervectors.FisherVectorsNodeFactory"
+            id="org.knime.knip.patents.features.meta.fishervectors.FisherVectorsNodeFactory">
+      </node>
+   </extension>
 </plugin>
