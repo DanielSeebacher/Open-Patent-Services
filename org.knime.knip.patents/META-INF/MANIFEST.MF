@@ -17,11 +17,13 @@ Require-Bundle: org.knime.base,
  scijava-common;bundle-version="2.38.0",
  org.knime.knip.io;bundle-version="1.3.0",
  scifio;bundle-version="0.21.0",
- org.knime.ext.weka_3.7;bundle-version="2.11.2"
+ org.knime.core,
+ com.fasterxml.jackson.core.jackson-core;bundle-version="2.4.3"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: patents.jar,
  lib/jai_codec.jar,
- lib/jai_core-1.1.3.jar
+ lib/jai_core-1.1.3.jar,
+ lib/vtd-xml.jar
 Bundle-ActivationPolicy: lazy
 Export-Package: org.knime.knip.patents.features,
  org.knime.knip.patents.formats
