@@ -15,14 +15,14 @@ import org.knime.core.data.DataType;
 import org.knime.core.data.StringValue;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
-import org.knime.knip.patents.util.nodes.AbstractOPSNodeModel;
+import org.knime.knip.patents.util.nodes.AbstractOPSBulkNodeModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class FullCycleNodeModel extends AbstractOPSNodeModel<StringValue> {
+public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 
 	public FullCycleNodeModel() {
 		super(100, StringValue.class);

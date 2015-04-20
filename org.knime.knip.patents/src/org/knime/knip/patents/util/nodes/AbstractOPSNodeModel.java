@@ -5,10 +5,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,35 +16,45 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
-import org.knime.core.data.DataValue;
 import org.knime.core.data.StringValue;
-import org.knime.core.data.collection.CollectionCellFactory;
-import org.knime.core.data.collection.ListCell;
-import org.knime.core.data.def.StringCell;
 import org.knime.core.node.NodeLogger;
+import org.knime.core.node.NodeModel;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
-import org.knime.knip.misc.nodes.BulkValueToCellsNodeModel;
+import org.knime.knip.base.node.ValueToCellsNodeModel;
 import org.knime.knip.patents.KNIMEOPSPlugin;
-import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public abstract class AbstractOPSNodeModel<VIN extends DataValue> extends
-		BulkValueToCellsNodeModel<VIN> {
-
-	public AbstractOPSNodeModel(int numRowsToProcess, Class<VIN> inValueClass,
-			SettingsModel... additionalModels) {
-		super(numRowsToProcess, inValueClass, additionalModels);
-	}
+/**
+ * Abstract {@link NodeModel} for all subclasses which use one of the REST
+ * Services from ops.epo.org
+ * 
+ * @author Daniel Seebacher, University of Konstanz
+ * 
+ */
+public abstract class AbstractOPSNodeModel extends
+		ValueToCellsNodeModel<StringValue> {
 
 	private static final NodeLogger LOGGER = NodeLogger
 			.getLogger(AbstractOPSNodeModel.class);
+	
+	private final XPath xpath;
+
+	public AbstractOPSNodeModel() {
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		this.xpath = xPathfactory.newXPath();
+	}
+	
+	/**
+	 * Override this method if you need additional SettingsModel in subclasses
+	 */
+	@Override
+	protected void addSettingsModels(List<SettingsModel> settingsModels) {
+
+	}
 
 	/**
 	 * Takes an {@link HttpURLConnection} and parses its error stream and
@@ -162,49 +169,9 @@ public abstract class AbstractOPSNodeModel<VIN extends DataValue> extends
 		}
 	}
 
-	protected abstract URL getURL(StringValue... values)
-			throws MalformedURLException;
-
-	public Document downloadDocument(URL url) throws Exception {
-		// check if we need to get an access token
-		String consumerKey = KNIMEOPSPlugin.getOAuth2ConsumerKey();
-		String consumerSecret = KNIMEOPSPlugin.getOAuth2ConsumerSecret();
-
-		String accessToken = null;
-		if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
-			accessToken = AccessTokenGenerator.getInstance().getAccessToken(
-					consumerKey, consumerSecret);
-		}
-
-		// create URL and HttpURLConnection
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-		// set accesstoken if available
-		if (accessToken != null) {
-			connection.setRequestProperty("Authorization", "Bearer "
-					+ accessToken);
-		}
-
-		checkResponse(connection);
-
-		// download doc
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(connection.getInputStream());
-
-		throttle(connection, "retrieval");
-
-		return doc;
+	public abstract URL getURL(String input) throws MalformedURLException;
+	
+	protected XPath getXPath(){
+		return xpath;
 	}
-
-	protected ListCell stringsToListCell(Set<String> retrieveStrings) {
-
-		List<StringCell> outCells = new ArrayList<StringCell>();
-		for (String inString : retrieveStrings) {
-			outCells.add(new StringCell(inString));
-		}
-
-		return CollectionCellFactory.createListCell(outCells);
-	}
-
 }

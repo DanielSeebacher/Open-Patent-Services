@@ -19,12 +19,12 @@ import org.knime.core.data.def.StringCell;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.util.Pair;
 import org.knime.knip.patents.KNIMEOPSPlugin;
-import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
+import org.knime.knip.patents.util.nodes.AbstractOPSNodeModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-public class OPSDescriptionNodeModel extends AbstractOPSModel {
+public class OPSDescriptionNodeModel extends AbstractOPSNodeModel {
 
 	private static final NodeLogger LOGGER = NodeLogger
 			.getLogger(OPSDescriptionNodeModel.class);

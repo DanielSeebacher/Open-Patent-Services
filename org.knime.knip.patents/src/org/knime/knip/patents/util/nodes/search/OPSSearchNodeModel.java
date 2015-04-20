@@ -21,13 +21,13 @@ import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.util.Pair;
 import org.knime.knip.patents.KNIMEOPSPlugin;
-import org.knime.knip.patents.util.AbstractOPSModel;
 import org.knime.knip.patents.util.AccessTokenGenerator;
+import org.knime.knip.patents.util.nodes.AbstractOPSNodeModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class OPSSearchNodeModel extends AbstractOPSModel {
+public class OPSSearchNodeModel extends AbstractOPSNodeModel {
 
 	private static final NodeLogger LOGGER = NodeLogger
 			.getLogger(OPSSearchNodeModel.class);

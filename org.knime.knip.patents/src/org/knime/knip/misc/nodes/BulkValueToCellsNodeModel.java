@@ -180,7 +180,8 @@ public abstract class BulkValueToCellsNodeModel<VIN extends DataValue> extends
 	private DataTableSpec getOutSpec(DataTableSpec inSpecs) {
 		List<DataColumnSpec> outSpec = new ArrayList<DataColumnSpec>();
 		List<Pair<String, DataType>> additionalOutSpec = getAdditionalOutSpec();
-		if (m_colCreationMode.equals(COL_CREATION_MODES[1])) {
+
+		if (m_colCreationMode.getStringValue().equals(COL_CREATION_MODES[1])) {
 			for (int i = 0; i < inSpecs.getNumColumns(); i++) {
 				outSpec.add(inSpecs.getColumnSpec(i));
 			}

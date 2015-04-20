@@ -5,7 +5,7 @@
 	Contributors: IBM Corporation - initial API and implementation -->
 
 <!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
-<knimeNode icon="icons/logo.png" type="Manipulator">
+<knimeNode icon="../logo.png" type="Manipulator">
 	<name>OPS Description</name>
 	<shortDescription>Download the description of a patent.</shortDescription>
 

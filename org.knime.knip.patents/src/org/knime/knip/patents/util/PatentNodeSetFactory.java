@@ -67,8 +67,7 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 	 */
 	@Override
 	public Collection<String> getNodeFactoryIds() {
-		m_nodeFactories.put(
-				OPSImagesNodeFactory.class.getCanonicalName(),
+		m_nodeFactories.put(OPSImagesNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
 		m_nodeFactories.put(OPSSearchNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
@@ -78,7 +77,7 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 				"/community/knip/patents/Utilities/");
 		m_nodeFactories.put(FullCycleNodeFactory.class.getCanonicalName(),
 				"/community/knip/patents/Utilities/");
-		
+
 		return m_nodeFactories.keySet();
 	}
 
