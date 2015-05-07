@@ -111,13 +111,16 @@ public class OPSDescriptionNodeModel extends AbstractOPSNodeModel {
 			for (int i = 0; i < descriptionParagraphs.getLength(); i++) {
 				descriptionString = descriptionString
 						.concat(descriptionParagraphs.item(i).getTextContent()
-								.replaceAll("\\n", "")
-								.replaceAll("^\\[[0-9]+\\]", "").trim());
+								.replaceAll("\\n+", "")
+								.replaceAll("^\\[[0-9]+\\]", "")
+								.replaceAll("\t", "").trim());
 			}
 
-			return new DataCell[] { new StringCell(descriptionString) };
+			return new DataCell[] { (descriptionString == null || descriptionString
+					.isEmpty()) ? new MissingCell("No claims available.")
+					: new StringCell(descriptionString) };
 		} catch (Exception e) {
-			LOGGER.warn(
+			LOGGER.info(
 					"Server returned error during parsing: " + e.getMessage(),
 					e);
 			return new DataCell[] { new MissingCell(e.getMessage()) };

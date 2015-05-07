@@ -12,6 +12,7 @@ import net.imglib2.util.ValuePair;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataType;
+import org.knime.core.data.MissingCell;
 import org.knime.core.data.StringValue;
 import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
@@ -67,16 +68,12 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 
 			Element currentElement = (Element) nl.item(i);
 
-			row[0] = new StringCell(getTitle(currentElement));
-			row[1] = new StringCell(getAbstract(currentElement));
-
-			row[2] = super.stringsToListCell(getCPCs(currentElement));
-
-			row[3] = super.stringsToListCell(getIPCRs(currentElement));
-
-			row[4] = super.stringsToListCell(getApplicants(currentElement));
-
-			row[5] = super.stringsToListCell(getInventors(currentElement));
+			row[0] = getTitle(currentElement);
+			row[1] = getAbstract(currentElement);
+			row[2] = getCPCs(currentElement);
+			row[3] = getIPCRs(currentElement);
+			row[4] = getApplicants(currentElement);
+			row[5] = getInventors(currentElement);
 
 			results.add(row);
 		}
@@ -102,7 +99,7 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 						+ sb.toString() + "/full-cycle");
 	}
 
-	private String getTitle(Element patentElement) {
+	private DataCell getTitle(Element patentElement) {
 
 		String title = "";
 
@@ -115,10 +112,11 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 			}
 		}
 
-		return title;
+		return (title == null || title.isEmpty()) ? new MissingCell(
+				"No english title available!") : new StringCell(title);
 	}
 
-	private String getAbstract(Element patentElement) {
+	private DataCell getAbstract(Element patentElement) {
 
 		String abztract = "";
 
@@ -131,10 +129,11 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 			}
 		}
 
-		return abztract;
+		return (abztract == null || abztract.isEmpty()) ? new MissingCell(
+				"No english title available!") : new StringCell(abztract);
 	}
 
-	private static Set<String> getCPCs(Element patentElement) {
+	private DataCell getCPCs(Element patentElement) {
 
 		Set<String> cpcs = new HashSet<String>();
 
@@ -169,10 +168,11 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 					.replaceAll("\\s+", " ").trim());
 		}
 
-		return cpcs;
+		return (cpcs.isEmpty()) ? new MissingCell("No CPCs available!") : super
+				.stringsToListCell(cpcs);
 	}
 
-	private static Set<String> getIPCRs(Element patentElement) {
+	private DataCell getIPCRs(Element patentElement) {
 
 		Set<String> ipcrs = new HashSet<String>();
 
@@ -184,10 +184,11 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 					.replaceAll("\\s+", " ").trim());
 		}
 
-		return ipcrs;
+		return (ipcrs.isEmpty()) ? new MissingCell("No IPCRs available!")
+				: super.stringsToListCell(ipcrs);
 	}
 
-	private static Set<String> getApplicants(Element patentElement) {
+	private DataCell getApplicants(Element patentElement) {
 
 		Set<String> applicants = new HashSet<String>();
 
@@ -204,12 +205,14 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 					.replaceAll("\\n+", "").replaceAll("\\s+", " ").trim());
 		}
 
-		return applicants;
+		return (applicants.isEmpty()) ? new MissingCell(
+				"No applicants available!") : super
+				.stringsToListCell(applicants);
 	}
 
-	private static Set<String> getInventors(Element patentElement) {
+	private DataCell getInventors(Element patentElement) {
 
-		Set<String> applicants = new HashSet<String>();
+		Set<String> inventors = new HashSet<String>();
 
 		NodeList applicantNodes = patentElement
 				.getElementsByTagName("inventor");
@@ -220,10 +223,11 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 				continue;
 			}
 
-			applicants.add(applicantNode.getTextContent()
-					.replaceAll("\\n+", "").replaceAll("\\s+", " ").trim());
+			inventors.add(applicantNode.getTextContent().replaceAll("\\n+", "")
+					.replaceAll("\\s+", " ").trim());
 		}
 
-		return applicants;
+		return (inventors.isEmpty()) ? new MissingCell(
+				"No inventors available!") : super.stringsToListCell(inventors);
 	}
 }

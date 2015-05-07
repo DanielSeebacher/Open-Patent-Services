@@ -29,7 +29,7 @@ public class OPSClaimsNodeModel extends AbstractOPSNodeModel {
 			.getLogger(OPSClaimsNodeModel.class);
 
 	private static final String[] ACCEPTED_COUNTRY_CODES = new String[] { "EP",
-		"WO", "AT", "CA", "CH", "GB", "ES" };
+			"WO", "AT", "CA", "CH", "GB", "ES" };
 	private XPathExpression claimsExpression;
 
 	public OPSClaimsNodeModel() {
@@ -57,14 +57,13 @@ public class OPSClaimsNodeModel extends AbstractOPSNodeModel {
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
 
-		
 		String countryCode = patentIDValue.getStringValue().split("\\.")[0];
 		if (!Arrays.asList(ACCEPTED_COUNTRY_CODES).contains(countryCode)) {
 			LOGGER.warn("Claims not available for country: " + countryCode);
 			return new DataCell[] { new MissingCell(
 					"Claims not available for country: " + countryCode) };
 		}
-		
+
 		try {
 			// check if we need to get an access token
 			String consumerKey = KNIMEOPSPlugin.getOAuth2ConsumerKey();
@@ -107,9 +106,10 @@ public class OPSClaimsNodeModel extends AbstractOPSNodeModel {
 			String claims = (String) claimsExpression.evaluate(doc,
 					XPathConstants.STRING);
 
-			return new DataCell[] { new StringCell(claims) };
+			return new DataCell[] { (claims == null || claims.isEmpty()) ? new MissingCell(
+					"No claims available.") : new StringCell(claims) };
 		} catch (Exception e) {
-			LOGGER.warn(
+			LOGGER.info(
 					"Server returned error during parsing: " + e.getMessage(),
 					e);
 			return new DataCell[] { new MissingCell(e.getMessage()) };

@@ -26,7 +26,7 @@ import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
-import org.knime.knip.misc.nodes.BulkValueToCellsNodeModel;
+import org.knime.knip.base.node.BulkValueToCellsNodeModel;
 import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.knime.knip.patents.util.AccessTokenGenerator;
 import org.w3c.dom.Document;

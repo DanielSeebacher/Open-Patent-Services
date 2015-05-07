@@ -4,7 +4,7 @@ import org.knime.core.data.StringValue;
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
-import org.knime.knip.misc.nodes.BulkValueToCellsNodeDialog;
+import org.knime.knip.base.node.BulkValueToCellsNodeDialog;
 
 public class FullCycleNodeFactory extends
 		NodeFactory<FullCycleNodeModel> {
