@@ -106,6 +106,7 @@ public class AHDHNodeModel extends
 				if (currentLevel < this.m_ld.getIntValue()) {
 
 					final List<Double> calculateDensity = calculateDensity(temp);
+					System.out.println(calculateDensity);
 					for (final Double double1 : calculateDensity) {
 						if (Double.isNaN(double1)) {
 							fv.add(0d);

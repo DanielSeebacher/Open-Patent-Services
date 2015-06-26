@@ -124,7 +124,7 @@ public abstract class BulkValueToCellsNodeModel<VIN extends DataValue> extends
 				}
 
 				List<DataCell[]> results = compute(dataValues);
-				for (int rowNum = 0; rowNum < m_numRowsToProcess; rowNum++) {
+				for (int rowNum = 0; rowNum < rowsToProcess.size(); rowNum++) {
 
 					List<DataCell> newRow = new ArrayList<DataCell>();
 					if (m_colCreationMode.getStringValue().equalsIgnoreCase(
