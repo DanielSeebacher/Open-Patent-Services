@@ -4,6 +4,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +18,8 @@ import org.knime.core.data.MissingCell;
 import org.knime.core.data.StringValue;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.NodeLogger;
+import org.knime.core.node.defaultnodesettings.SettingsModel;
+import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.core.util.Pair;
 import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.knime.knip.patents.util.AccessTokenGenerator;
@@ -25,33 +28,25 @@ import org.w3c.dom.Document;
 
 public class OPSClaimsNodeModel extends AbstractOPSNodeModel {
 
-	private static final NodeLogger LOGGER = NodeLogger
-			.getLogger(OPSClaimsNodeModel.class);
+	private static final NodeLogger LOGGER = NodeLogger.getLogger(OPSClaimsNodeModel.class);
 
-	private static final String[] ACCEPTED_COUNTRY_CODES = new String[] { "EP",
-			"WO", "AT", "CA", "CH", "GB", "ES" };
-	private XPathExpression claimsExpression;
+	private static final String[] ACCEPTED_COUNTRY_CODES = new String[] { "EP", "WO", "AT", "CA", "CH", "GB", "ES" };
 
-	public OPSClaimsNodeModel() {
-		super();
+	static SettingsModelString createLanguageModel() {
+		return new SettingsModelString("m_language", "EN");
+	}
 
-		try {
-			claimsExpression = super
-					.getXPath()
-					.compile(
-							"(((//*[local-name() = 'claims'])[@lang='EN'])[1])/child::*");
-		} catch (XPathExpressionException xee) {
-			throw new IllegalArgumentException(
-					"Couldn't instantiate Claims Node", xee);
-		}
+	private final SettingsModelString m_language = createLanguageModel();
 
+	@Override
+	protected void addSettingsModels(List<SettingsModel> settingsModels) {
+		super.addSettingsModels(settingsModels);
+		settingsModels.add(m_language);
 	}
 
 	@Override
-	public URL getURL(String input) throws MalformedURLException {
-		return new URL(
-				"http://ops.epo.org/3.1/rest-services/published-data/publication/docdb/"
-						+ input + "/claims");
+	public URL getURL(String... input) throws MalformedURLException {
+		return new URL("http://ops.epo.org/3.1/rest-services/published-data/publication/docdb/" + input[0] + "/claims");
 	}
 
 	@Override
@@ -60,8 +55,24 @@ public class OPSClaimsNodeModel extends AbstractOPSNodeModel {
 		String countryCode = patentIDValue.getStringValue().split("\\.")[0];
 		if (!Arrays.asList(ACCEPTED_COUNTRY_CODES).contains(countryCode)) {
 			LOGGER.warn("Claims not available for country: " + countryCode);
-			return new DataCell[] { new MissingCell(
-					"Claims not available for country: " + countryCode) };
+			return new DataCell[] { new MissingCell("Claims not available for country: " + countryCode) };
+		}
+
+		XPathExpression claimsExpression;
+		try {
+			if (m_language.getStringValue().equalsIgnoreCase("DE")) {
+				claimsExpression = super.getXPath()
+						.compile("(((//*[local-name() = 'claims'])[@lang='DE' or @lang='de'])[1])/child::*");
+			} else if (m_language.getStringValue().equalsIgnoreCase("FR")) {
+				claimsExpression = super.getXPath()
+						.compile("(((//*[local-name() = 'claims'])[@lang='FR' or @lang='fr'])[1])/child::*");
+			} else {
+				claimsExpression = super.getXPath()
+						.compile("(((//*[local-name() = 'claims'])[@lang='EN' or @lang='en'])[1])/child::*");
+
+			}
+		} catch (XPathExpressionException xee) {
+			throw new IllegalArgumentException("Couldn't instantiate Claims Node", xee);
 		}
 
 		try {
@@ -71,28 +82,23 @@ public class OPSClaimsNodeModel extends AbstractOPSNodeModel {
 
 			String accessToken = null;
 			if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
-				accessToken = AccessTokenGenerator.getInstance()
-						.getAccessToken(consumerKey, consumerSecret);
+				accessToken = AccessTokenGenerator.getInstance().getAccessToken(consumerKey, consumerSecret);
 			}
 
 			// create URL and HttpURLConnection
 			URL fullCycleURL = getURL(patentIDValue.getStringValue());
-			HttpURLConnection fullCycleHttpConnection = (HttpURLConnection) fullCycleURL
-					.openConnection();
+			HttpURLConnection fullCycleHttpConnection = (HttpURLConnection) fullCycleURL.openConnection();
 
 			// set accesstoken if available
 			if (accessToken != null) {
-				fullCycleHttpConnection.setRequestProperty("Authorization",
-						"Bearer " + accessToken);
+				fullCycleHttpConnection.setRequestProperty("Authorization", "Bearer " + accessToken);
 			}
 
 			// check html respone
 			try {
 				checkResponse(fullCycleHttpConnection);
 			} catch (Exception e) {
-				LOGGER.warn(
-						"Server returned error before parsing: "
-								+ e.getMessage(), e);
+				LOGGER.warn("Server returned error before parsing: " + e.getMessage(), e);
 				return new DataCell[] { new MissingCell(e.getMessage()) };
 			}
 
@@ -103,15 +109,12 @@ public class OPSClaimsNodeModel extends AbstractOPSNodeModel {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(fullCycleHttpConnection.getInputStream());
 
-			String claims = (String) claimsExpression.evaluate(doc,
-					XPathConstants.STRING);
+			String claims = (String) claimsExpression.evaluate(doc, XPathConstants.STRING);
 
-			return new DataCell[] { (claims == null || claims.isEmpty()) ? new MissingCell(
-					"No claims available.") : new StringCell(claims) };
+			return new DataCell[] { (claims == null || claims.isEmpty()) ? new MissingCell("No claims available.")
+					: new StringCell(claims) };
 		} catch (Exception e) {
-			LOGGER.info(
-					"Server returned error during parsing: " + e.getMessage(),
-					e);
+			LOGGER.info("Server returned error during parsing: " + e.getMessage(), e);
 			return new DataCell[] { new MissingCell(e.getMessage()) };
 		}
 

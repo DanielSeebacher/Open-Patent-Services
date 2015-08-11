@@ -8,11 +8,14 @@ import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSetFactory;
 import org.knime.core.node.config.ConfigRO;
+import org.knime.knip.patents.util.nodes.abstracts.OPSAbstractNodeFactory;
 import org.knime.knip.patents.util.nodes.claims.OPSClaimsNodeFactory;
 import org.knime.knip.patents.util.nodes.description.OPSDescriptionNodeFactory;
 import org.knime.knip.patents.util.nodes.drawings.OPSImagesNodeFactory;
 import org.knime.knip.patents.util.nodes.fullcycle.FullCycleNodeFactory;
+import org.knime.knip.patents.util.nodes.numberservice.OPSNumberServiceNodeFactory;
 import org.knime.knip.patents.util.nodes.search.OPSSearchNodeFactory;
+import org.knime.knip.patents.util.nodes.title.OPSTitleNodeFactory;
 
 /**
  * NodeSetFactory for Nodes which are used to calculate features.
@@ -52,12 +55,11 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends NodeFactory<? extends NodeModel>> getNodeFactory(
-			final String id) {
+	public Class<? extends NodeFactory<? extends NodeModel>> getNodeFactory(final String id) {
 		try {
-			return (Class<? extends NodeFactory<? extends NodeModel>>) Class
-					.forName(id);
+			return (Class<? extends NodeFactory<? extends NodeModel>>) Class.forName(id);
 		} catch (final ClassNotFoundException e) {
+			// ignore
 		}
 		return null;
 	}
@@ -67,17 +69,14 @@ public class PatentNodeSetFactory implements NodeSetFactory {
 	 */
 	@Override
 	public Collection<String> getNodeFactoryIds() {
-		m_nodeFactories.put(OPSImagesNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(OPSSearchNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(OPSClaimsNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(OPSDescriptionNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-		m_nodeFactories.put(FullCycleNodeFactory.class.getCanonicalName(),
-				"/community/knip/patents/Utilities/");
-
+		m_nodeFactories.put(OPSImagesNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OPSSearchNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OPSClaimsNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OPSDescriptionNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
+		m_nodeFactories.put(FullCycleNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OPSAbstractNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OPSTitleNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
+		m_nodeFactories.put(OPSNumberServiceNodeFactory.class.getCanonicalName(), "/community/knip/patents/Utilities/");
 		return m_nodeFactories.keySet();
 	}
 

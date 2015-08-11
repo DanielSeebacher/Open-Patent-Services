@@ -53,7 +53,7 @@ public abstract class AbstractOPSNodeModel extends
 	 */
 	@Override
 	protected void addSettingsModels(List<SettingsModel> settingsModels) {
-
+		// 
 	}
 
 	/**
@@ -169,7 +169,7 @@ public abstract class AbstractOPSNodeModel extends
 		}
 	}
 
-	public abstract URL getURL(String input) throws MalformedURLException;
+	public abstract URL getURL(String... input) throws MalformedURLException;
 	
 	protected XPath getXPath(){
 		return xpath;

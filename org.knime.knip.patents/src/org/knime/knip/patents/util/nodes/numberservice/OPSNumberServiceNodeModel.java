@@ -1,9 +1,8 @@
-package org.knime.knip.patents.util.nodes.description;
+package org.knime.knip.patents.util.nodes.numberservice;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,53 +26,49 @@ import org.knime.knip.patents.util.nodes.AbstractOPSNodeModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-public class OPSDescriptionNodeModel extends AbstractOPSNodeModel {
+public class OPSNumberServiceNodeModel extends AbstractOPSNodeModel {
 
-	private static final NodeLogger LOGGER = NodeLogger.getLogger(OPSDescriptionNodeModel.class);
+	private static final NodeLogger LOGGER = NodeLogger.getLogger(OPSNumberServiceNodeModel.class);
 
-	private static final String[] ACCEPTED_COUNTRY_CODES = new String[] { "EP", "WO", "AT", "CA", "CH", "GB", "ES" };
-
-	static SettingsModelString createLanguageModel() {
-		return new SettingsModelString("m_language", "EN");
+	static SettingsModelString createInputFormatModel() {
+		return new SettingsModelString("m_inputFormat", "docdb");
 	}
 
-	private final SettingsModelString m_language = createLanguageModel();
+	static SettingsModelString createOutputFormatModel() {
+		return new SettingsModelString("m_outputFormat", "epodoc");
+	}
+
+	private final SettingsModelString m_inputFormat = createInputFormatModel();
+	private final SettingsModelString m_outputFormat = createOutputFormatModel();
 
 	@Override
 	protected void addSettingsModels(List<SettingsModel> settingsModels) {
 		super.addSettingsModels(settingsModels);
-		settingsModels.add(m_language);
+		settingsModels.add(m_inputFormat);
+		settingsModels.add(m_outputFormat);
 	}
 
 	@Override
 	public URL getURL(String... input) throws MalformedURLException {
-		return new URL(
-				"http://ops.epo.org/3.1/rest-services/published-data/publication/docdb/" + input[0] + "/description");
+		return new URL("http://ops.epo.org/3.1/rest-services/number-service/application/" + input[0] + "/" + input[1]
+				+ "/" + input[2]);
 	}
 
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
 
-		String countryCode = patentIDValue.getStringValue().split("\\.")[0];
-		if (!Arrays.asList(ACCEPTED_COUNTRY_CODES).contains(countryCode)) {
-			LOGGER.warn("Description not available for country: " + countryCode);
-			return new DataCell[] { new MissingCell("Description not available for country: " + countryCode) };
+		if (m_inputFormat.getStringValue().equalsIgnoreCase("epodoc")
+				&& m_inputFormat.getStringValue().equalsIgnoreCase("docdb")) {
+			throw new IllegalArgumentException(
+					"Following conversion of formats is not supported by the OPS epodoc => docdb.");
 		}
 
-		XPathExpression descriptionExpression = null;
+		XPathExpression numberServiceExpression = null;
 		try {
-			if (m_language.getStringValue().equalsIgnoreCase("DE")) {
-				descriptionExpression = super.getXPath()
-						.compile("(((//*[local-name() = 'description'])[@lang='DE' or @lang='de'])[1])//child::*");
-			} else if (m_language.getStringValue().equalsIgnoreCase("FR")) {
-				descriptionExpression = super.getXPath()
-						.compile("(((//*[local-name() = 'description'])[@lang='FR' or @lang='fr'])[1])//child::*");
-			} else {
-				descriptionExpression = super.getXPath()
-						.compile("(((//*[local-name() = 'description'])[@lang='EN' or @lang='en'])[1])//child::*");
-			}
+			numberServiceExpression = super.getXPath()
+					.compile("(((//*[local-name() = 'output']//*[local-name() = 'document-id']))[1])/child::*");
 		} catch (XPathExpressionException xee) {
-			throw new IllegalArgumentException("Couldn't instantiate Description Node", xee);
+			throw new IllegalArgumentException("Couldn't instantiate Number service Node", xee);
 		}
 
 		try {
@@ -87,7 +82,9 @@ public class OPSDescriptionNodeModel extends AbstractOPSNodeModel {
 			}
 
 			// create URL and HttpURLConnection
-			URL fullCycleURL = getURL(patentIDValue.getStringValue());
+			URL fullCycleURL = getURL(m_inputFormat.getStringValue(), patentIDValue.getStringValue(),
+					m_outputFormat.getStringValue());
+
 			HttpURLConnection fullCycleHttpConnection = (HttpURLConnection) fullCycleURL.openConnection();
 
 			// set accesstoken if available
@@ -110,26 +107,29 @@ public class OPSDescriptionNodeModel extends AbstractOPSNodeModel {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(fullCycleHttpConnection.getInputStream());
 
-			NodeList descriptionParagraphs = (NodeList) descriptionExpression.evaluate(doc, XPathConstants.NODESET);
+			NodeList abstracts = (NodeList) numberServiceExpression.evaluate(doc, XPathConstants.NODESET);
 
-			String descriptionString = "";
-			for (int i = 0; i < descriptionParagraphs.getLength(); i++) {
-				descriptionString = descriptionString.concat(descriptionParagraphs.item(i).getTextContent().trim());
+			String output = new String("");
+			for (int i = 0; i < abstracts.getLength(); i++) {
+				if (i > 0) {
+					output += ".";
+				}
+
+				output += abstracts.item(i).getTextContent();
 			}
 
-			return new DataCell[] { (descriptionString == null || descriptionString.isEmpty())
-					? new MissingCell("No claims available.") : new StringCell(descriptionString) };
+			return new DataCell[] {
+					(output.isEmpty()) ? new MissingCell("No abstracts available.") : new StringCell(output) };
 		} catch (Exception e) {
 			LOGGER.info("Server returned error during parsing: " + e.getMessage(), e);
 			return new DataCell[] { new MissingCell(e.getMessage()) };
 		}
-
 	}
 
 	@Override
 	protected Pair<DataType[], String[]> getDataOutTypeAndName() {
 		DataType[] datatypes = new DataType[] { StringCell.TYPE };
-		String[] columnNames = new String[] { "Description" };
+		String[] columnNames = new String[] { "Output Number" };
 
 		return new Pair<DataType[], String[]>(datatypes, columnNames);
 	}

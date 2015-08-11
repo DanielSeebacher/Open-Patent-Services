@@ -61,6 +61,8 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 		URL url = getURL(values.toArray(new StringValue[values.size()]));
 		Document doc = super.downloadDocument(url);
 
+		System.out.println("a");
+		
 		NodeList nl = doc.getElementsByTagName("exchange-document");
 		for (int i = 0; i < nl.getLength(); i++) {
 
@@ -77,6 +79,9 @@ public class FullCycleNodeModel extends AbstractOPSBulkNodeModel<StringValue> {
 
 			results.add(row);
 		}
+
+		
+		System.out.println("b");
 
 		return results;
 	}
