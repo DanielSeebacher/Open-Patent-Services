@@ -4,10 +4,9 @@ import org.knime.core.data.StringValue;
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
-import org.knime.knip.base.node.BulkValueToCellsNodeDialog;
+import org.knime.knip.base.node.ValueToCellsNodeDialog;
 
-public class FullCycleNodeFactory extends
-		NodeFactory<FullCycleNodeModel> {
+public class FullCycleNodeFactory extends NodeFactory<FullCycleNodeModel> {
 
 	@Override
 	public FullCycleNodeModel createNodeModel() {
@@ -20,8 +19,7 @@ public class FullCycleNodeFactory extends
 	}
 
 	@Override
-	public NodeView<FullCycleNodeModel> createNodeView(int viewIndex,
-			FullCycleNodeModel nodeModel) {
+	public NodeView<FullCycleNodeModel> createNodeView(int viewIndex, FullCycleNodeModel nodeModel) {
 		return null;
 	}
 
@@ -32,6 +30,14 @@ public class FullCycleNodeFactory extends
 
 	@Override
 	protected NodeDialogPane createNodeDialogPane() {
-		return new BulkValueToCellsNodeDialog<StringValue>(StringValue.class);
+		return new ValueToCellsNodeDialog<StringValue>() {
+
+			@Override
+			public void addDialogComponents() {
+				// TODO Auto-generated method stub
+
+			}
+
+		};
 	}
 }

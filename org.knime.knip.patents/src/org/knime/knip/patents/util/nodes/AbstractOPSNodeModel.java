@@ -113,17 +113,17 @@ public abstract class AbstractOPSNodeModel extends
 
 		String serverStatus = "unknown";
 		int serviceLimit = 0;
-
+		
 		try {
 			String throttleControl = connection
-					.getHeaderField("X-Throttling-Control");
+					.getHeaderField("X-Throttling-Control");			
 			serverStatus = throttleControl.split(" ")[0];
 
 			serviceLimit = Integer
 					.parseInt(throttleControl.split(field + "=")[1].split(":")[1]
 							.split("[^\\d]")[0]);
 		} catch (Exception e) {
-			serviceLimit = 5;
+			serviceLimit = 20;
 			LOGGER.warn(
 					"Couldn't retrieve server status, sleep for a few seconds. "
 							+ e.getMessage(), e);

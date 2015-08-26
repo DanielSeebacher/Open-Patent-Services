@@ -117,7 +117,8 @@ public class OPSImagesNodeModel extends AbstractOPSNodeModel {
 				}
 			}
 
-			return new DataCell[] { CollectionCellFactory.createListCell(pathToImages) };
+			return (pathToImages.isEmpty()) ? new DataCell[] { new MissingCell("No downloadable images found.") }
+					: new DataCell[] { CollectionCellFactory.createListCell(pathToImages) };
 		} catch (Exception e) {
 			LOGGER.warn("Other error: " + e.getMessage(), e);
 			return new DataCell[] { new MissingCell(e.getMessage()) };
