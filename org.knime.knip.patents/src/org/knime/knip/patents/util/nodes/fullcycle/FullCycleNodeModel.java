@@ -4,7 +4,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -88,7 +87,8 @@ public class FullCycleNodeModel extends AbstractOPSNodeModel {
 				checkResponse(fullCycleHttpConnection);
 			} catch (Exception e) {
 				LOGGER.warn("Server returned error before parsing: " + e.getMessage(), e);
-				return new DataCell[] { new MissingCell(e.getMessage()), new MissingCell(e.getMessage()), new MissingCell(e.getMessage()) };
+				return new DataCell[] { new MissingCell(e.getMessage()), new MissingCell(e.getMessage()),
+						new MissingCell(e.getMessage()) };
 			}
 
 			throttle(fullCycleHttpConnection, "retrieval");
@@ -103,6 +103,11 @@ public class FullCycleNodeModel extends AbstractOPSNodeModel {
 			List<StringCell> cpcs = new ArrayList<StringCell>();
 			for (int k = 0; k < cpcNodeList.getLength(); k++) {
 				String[] split = cpcNodeList.item(k).getTextContent().trim().split("\\s+");
+
+				if (split.length != 6) {
+					continue;
+				}
+				
 				cpcs.add(new StringCell(
 						split[0] + "," + split[1] + "," + split[2] + "," + split[3] + "/" + split[4] + "," + split[5]));
 			}
@@ -122,10 +127,11 @@ public class FullCycleNodeModel extends AbstractOPSNodeModel {
 			DataCell ipcrOutcell = (!ipcrs.isEmpty()) ? CollectionCellFactory.createListCell(ipcrs)
 					: new MissingCell("No ipcrs available.");
 
-			return new DataCell[] { cpcOutcell, ipcrOutcell, familyidCell};
+			return new DataCell[] { cpcOutcell, ipcrOutcell, familyidCell };
 		} catch (Exception e) {
 			LOGGER.info("Server returned error during parsing: " + e.getMessage(), e);
-			return new DataCell[] { new MissingCell(e.getMessage()), new MissingCell(e.getMessage()), new MissingCell(e.getMessage())};
+			return new DataCell[] { new MissingCell(e.getMessage()), new MissingCell(e.getMessage()),
+					new MissingCell(e.getMessage()) };
 		}
 
 	}
@@ -133,8 +139,8 @@ public class FullCycleNodeModel extends AbstractOPSNodeModel {
 	@Override
 	protected Pair<DataType[], String[]> getDataOutTypeAndName() {
 		DataType[] datatypes = new DataType[] { ListCell.getCollectionType(StringCell.TYPE),
-				ListCell.getCollectionType(StringCell.TYPE), StringCell.TYPE};
-		String[] columnNames = new String[] { "CPCs", "IPCRs", "familyid"};
+				ListCell.getCollectionType(StringCell.TYPE), StringCell.TYPE };
+		String[] columnNames = new String[] { "CPCs", "IPCRs", "familyid" };
 
 		return new Pair<DataType[], String[]>(datatypes, columnNames);
 	}

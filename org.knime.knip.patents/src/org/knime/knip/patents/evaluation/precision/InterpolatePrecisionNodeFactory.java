@@ -2,6 +2,7 @@ package org.knime.knip.patents.evaluation.precision;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.collection.CollectionDataValue;
+import org.knime.core.node.defaultnodesettings.DialogComponentNumber;
 import org.knime.knip.base.node.TwoValuesToCellNodeDialog;
 import org.knime.knip.base.node.TwoValuesToCellNodeFactory;
 import org.knime.knip.base.node.TwoValuesToCellNodeModel;
@@ -12,8 +13,8 @@ import org.knime.knip.base.node.TwoValuesToCellNodeModel;
  * 
  * @author Daniel Seebacher, University of Konstanz
  */
-public class InterpolatePrecisionNodeFactory extends
-		TwoValuesToCellNodeFactory<CollectionDataValue, CollectionDataValue> {
+public class InterpolatePrecisionNodeFactory
+		extends TwoValuesToCellNodeFactory<CollectionDataValue, CollectionDataValue> {
 
 	@Override
 	protected TwoValuesToCellNodeDialog<CollectionDataValue, CollectionDataValue> createNodeDialog() {
@@ -21,8 +22,8 @@ public class InterpolatePrecisionNodeFactory extends
 
 			@Override
 			public void addDialogComponents() {
-				// TODO Auto-generated method stub
-
+				addDialogComponent("Options", "Settings", new DialogComponentNumber(
+						InterpolatePrecisionNodeModel.createNumStepsModel(), "Num. Steps", 1));
 			}
 		};
 	}
