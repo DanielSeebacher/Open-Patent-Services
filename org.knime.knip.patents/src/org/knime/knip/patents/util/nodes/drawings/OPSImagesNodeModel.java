@@ -22,40 +22,37 @@ import org.knime.core.data.collection.ListCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.util.Pair;
-import org.knime.knip.patents.util.AbstractOPSModel;
+import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.knime.knip.patents.util.AccessTokenGenerator;
+import org.knime.knip.patents.util.nodes.AbstractOPSNodeModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class OPSImagesNodeModel extends AbstractOPSModel {
+public class OPSImagesNodeModel extends AbstractOPSNodeModel {
 
-	private static final NodeLogger LOGGER = NodeLogger
-			.getLogger(OPSImagesNodeModel.class);
+	private static final NodeLogger LOGGER = NodeLogger.getLogger(OPSImagesNodeModel.class);
 
 	@Override
 	protected DataCell[] compute(StringValue patentIDValue) throws Exception {
+
 		try {
 			// check if we need to get an access token
-			String consumerKey = m_consumerKey.getStringValue();
-			String consumerSecret = m_consumerSecret.getStringValue();
+			String consumerKey = KNIMEOPSPlugin.getOAuth2ConsumerKey();
+			String consumerSecret = KNIMEOPSPlugin.getOAuth2ConsumerSecret();
 
 			String accessToken = null;
 			if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
-				accessToken = AccessTokenGenerator.getInstance()
-						.getAccessToken(consumerKey, consumerSecret);
+				accessToken = AccessTokenGenerator.getInstance().getAccessToken(consumerKey, consumerSecret);
 			}
 
 			// create URL and HttpURLConnection
-			URL imageOverviewURL = getImageOverviewURL(patentIDValue
-					.getStringValue());
-			HttpURLConnection imageOverviewHttpConnection = (HttpURLConnection) imageOverviewURL
-					.openConnection();
+			URL imageOverviewURL = getURL(patentIDValue.getStringValue());
+			HttpURLConnection imageOverviewHttpConnection = (HttpURLConnection) imageOverviewURL.openConnection();
 
 			// set accesstoken if available
 			if (accessToken != null) {
-				imageOverviewHttpConnection.setRequestProperty("Authorization",
-						"Bearer " + accessToken);
+				imageOverviewHttpConnection.setRequestProperty("Authorization", "Bearer " + accessToken);
 			}
 
 			// check html respone
@@ -69,74 +66,59 @@ public class OPSImagesNodeModel extends AbstractOPSModel {
 			// download doc and extract image link and count
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(imageOverviewHttpConnection
-					.getInputStream());
+			Document doc = db.parse(imageOverviewHttpConnection.getInputStream());
 			imageOverviewHttpConnection.disconnect();
 
 			// download images to tmp directory and save absolute paths
 
 			List<StringCell> pathToImages = new ArrayList<>();
 
-			NodeList documentInstances = doc
-					.getElementsByTagName("ops:document-instance");
+			NodeList documentInstances = doc.getElementsByTagName("ops:document-instance");
 			for (int l = 0; l < documentInstances.getLength(); l++) {
 				Element documentInstance = (Element) documentInstances.item(l);
-				if (documentInstance.getAttribute("desc").equalsIgnoreCase(
-						"Drawing")) {
+				if (documentInstance.getAttribute("desc").equalsIgnoreCase("Drawing")) {
 
-					int numPages = Integer.parseInt(documentInstance
-							.getAttribute("number-of-pages"));
+					int numPages = Integer.parseInt(documentInstance.getAttribute("number-of-pages"));
 					String link = documentInstance.getAttribute("link");
 
 					for (int i = 0; i < numPages; i++) {
-						URL absoluteImageURL = getAbsoluteImageURL(link,
-								(1 + i));
+						URL absoluteImageURL = getAbsoluteImageURL(link, (1 + i));
 						HttpURLConnection absoluteImageHttpConnection = (HttpURLConnection) absoluteImageURL
 								.openConnection();
 
-						if (consumerKey.length() > 0
-								&& consumerSecret.length() > 0) {
-							accessToken = AccessTokenGenerator
-									.getInstance()
-									.getAccessToken(consumerKey, consumerSecret);
+						if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
+							accessToken = AccessTokenGenerator.getInstance().getAccessToken(consumerKey,
+									consumerSecret);
 						}
 
 						// set accesstoken if available
 						if (accessToken != null) {
-							absoluteImageHttpConnection.setRequestProperty(
-									"Authorization", "Bearer " + accessToken);
+							absoluteImageHttpConnection.setRequestProperty("Authorization", "Bearer " + accessToken);
 						}
 
 						// check html respone
 						try {
 							checkResponse(absoluteImageHttpConnection);
 						} catch (Exception e) {
-							LOGGER.warn(
-									"Server returned error: " + e.getMessage(),
-									e);
-							return new DataCell[] { new MissingCell(
-									e.getMessage()) };
+							LOGGER.warn("Server returned error: " + e.getMessage(), e);
+							return new DataCell[] { new MissingCell(e.getMessage()) };
 						}
 
 						throttle(absoluteImageHttpConnection, "images");
 
-						ReadableByteChannel rbc = Channels
-								.newChannel(absoluteImageHttpConnection
-										.getInputStream());
-						File imgFile = File.createTempFile("patent_"
-								+ patentIDValue.getStringValue(), "__"
-								+ (1 + i) + ".tiff");
+						ReadableByteChannel rbc = Channels.newChannel(absoluteImageHttpConnection.getInputStream());
+						File imgFile = File.createTempFile("patent_" + patentIDValue.getStringValue(),
+								"__" + (1 + i) + ".tiff");
 						FileOutputStream fos = new FileOutputStream(imgFile);
 						fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-						pathToImages.add(new StringCell(imgFile
-								.getAbsolutePath()));
+						pathToImages.add(new StringCell(imgFile.getAbsolutePath()));
 						fos.close();
 					}
 				}
 			}
 
-			return new DataCell[] { CollectionCellFactory
-					.createListCell(pathToImages) };
+			return (pathToImages.isEmpty()) ? new DataCell[] { new MissingCell("No downloadable images found.") }
+					: new DataCell[] { CollectionCellFactory.createListCell(pathToImages) };
 		} catch (Exception e) {
 			LOGGER.warn("Other error: " + e.getMessage(), e);
 			return new DataCell[] { new MissingCell(e.getMessage()) };
@@ -146,23 +128,18 @@ public class OPSImagesNodeModel extends AbstractOPSModel {
 
 	@Override
 	protected Pair<DataType[], String[]> getDataOutTypeAndName() {
-		DataType[] datatypes = new DataType[] { ListCell
-				.getCollectionType(StringCell.TYPE), };
+		DataType[] datatypes = new DataType[] { ListCell.getCollectionType(StringCell.TYPE), };
 		String[] columnNames = new String[] { "Path to Images" };
 
 		return new Pair<DataType[], String[]>(datatypes, columnNames);
 	}
 
-	private URL getAbsoluteImageURL(String link, int i)
-			throws MalformedURLException {
-		return new URL("http://ops.epo.org/3.1/rest-services/" + link
-				+ ".tiff?Range=" + i);
+	private URL getAbsoluteImageURL(String link, int i) throws MalformedURLException {
+		return new URL("http://ops.epo.org/3.1/rest-services/" + link + ".tiff?Range=" + i);
 	}
 
-	private URL getImageOverviewURL(String patentID)
-			throws MalformedURLException {
-		return new URL(
-				"http://ops.epo.org/3.1/rest-services/published-data/publication/docdb/"
-						+ patentID + "/images");
+	@Override
+	public URL getURL(String... input) throws MalformedURLException {
+		return new URL("http://ops.epo.org/3.1/rest-services/published-data/publication/docdb/" + input[0] + "/images");
 	}
 }

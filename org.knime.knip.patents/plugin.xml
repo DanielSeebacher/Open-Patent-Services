@@ -2,6 +2,21 @@
 <?eclipse version="3.0"?>
 
 <plugin>
+     <extension
+           point="org.eclipse.ui.preferencePages">
+        <page
+              category="org.knime.workbench.ui.preferences"
+              class="org.knime.knip.patents.prefs.OPSPreferencePage"
+              id="org.knime.knip.patents.prefs.OPSPreferencePage"
+              name="Open Patent Services Plugin">
+        </page>
+     </extension>
+     <extension
+           point="org.eclipse.core.runtime.preferences">
+        <initializer
+              class="org.knime.knip.patents.prefs.OPSPreferenceInitializer">
+        </initializer>
+     </extension>
    <extension
          point="org.knime.workbench.repository.categories">
       <category
@@ -23,8 +38,17 @@
       <nodeset
             default-category-icon="icons/logo.png"
             expert-flag="false"
+            factory-class="org.knime.knip.patents.evaluation.EvaluationNodeSetFactory"
+            id="org.knime.knip.patents.evaluation.EvaluationNodeSetFactory">
+      </nodeset>
+      <nodeset
+            default-category-icon="icons/logo.png"
+            expert-flag="false"
             factory-class="org.knime.knip.patents.util.PatentNodeSetFactory"
             id="org.knime.knip.patents.util.PatentNodeSetFactory">
       </nodeset>
+   </extension>
+   <extension
+         point="org.knime.workbench.repository.nodes">
    </extension>
 </plugin>

@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.imagej.ImgPlus;
-import net.imglib2.Cursor;
-import net.imglib2.type.logic.BitType;
-import net.imglib2.view.IntervalView;
-import net.imglib2.view.Views;
-
 import org.knime.core.data.DataType;
 import org.knime.core.data.collection.CollectionCellFactory;
 import org.knime.core.data.collection.ListCell;
@@ -19,6 +13,12 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.knip.base.data.img.ImgPlusValue;
 import org.knime.knip.base.node.ValueToCellNodeModel;
+
+import net.imagej.ImgPlus;
+import net.imglib2.Cursor;
+import net.imglib2.type.logic.BitType;
+import net.imglib2.view.IntervalView;
+import net.imglib2.view.Views;
 
 /**
  * Adaptive Hierarchical Density Histogram.
@@ -30,16 +30,14 @@ import org.knime.knip.base.node.ValueToCellNodeModel;
  *      Content-Based Multimedia Indexing (CBMI), 2010 International Workshop on
  *      , vol., no., pp.1,6, 23-25 June 2010
  */
-public class AHDHNodeModel extends
-		ValueToCellNodeModel<ImgPlusValue<BitType>, ListCell> {
+public class AHDHNodeModel extends ValueToCellNodeModel<ImgPlusValue<BitType>, ListCell> {
 
 	/**
 	 *
 	 * @return The SettingsModel for the Levels
 	 */
 	static SettingsModelIntegerBounded createLevelModel() {
-		return new SettingsModelIntegerBounded("m_level", 10, 1,
-				Integer.MAX_VALUE);
+		return new SettingsModelIntegerBounded("m_level", 10, 1, Integer.MAX_VALUE);
 	}
 
 	/**
@@ -71,15 +69,13 @@ public class AHDHNodeModel extends
 	}
 
 	@Override
-	protected ListCell compute(final ImgPlusValue<BitType> cellValue)
-			throws Exception {
+	protected ListCell compute(final ImgPlusValue<BitType> cellValue) throws Exception {
 
 		final ImgPlus<BitType> img = cellValue.getImgPlus();
 
 		// the first region is the whole image
 		List<IntervalView<BitType>> regions = new ArrayList<>();
-		regions.add(Views.interval(img, new long[] { img.min(0), img.min(1) },
-				new long[] { img.max(0), img.max(1) }));
+		regions.add(Views.interval(img, new long[] { img.min(0), img.min(1) }, new long[] { img.max(0), img.max(1) }));
 
 		// for each level
 		final List<Double> fv = new ArrayList<>();
@@ -99,8 +95,8 @@ public class AHDHNodeModel extends
 
 				// divide the region into four subregions using centroid
 				final double[] centroid = centroids.get(l);
-				final List<IntervalView<BitType>> temp = getSubRegions(
-						regions.get(l), (long) centroid[0], (long) centroid[1]);
+				final List<IntervalView<BitType>> temp = getSubRegions(regions.get(l), (long) centroid[0],
+						(long) centroid[1]);
 
 				// use density or relative density
 				if (currentLevel < this.m_ld.getIntValue()) {
@@ -120,8 +116,7 @@ public class AHDHNodeModel extends
 					// simple binary to get index (0110 -> 6)
 					int index = 0;
 					for (int i = 0; i < calculateRelativeDensity.size(); i++) {
-						index += ((calculateRelativeDensity.get(i) >= 1) ? 1d
-								: 0d) * Math.pow(2, i);
+						index += ((calculateRelativeDensity.get(i) >= 1) ? 1d : 0d) * Math.pow(2, i);
 					}
 					histogram[index]++;
 				}
@@ -163,8 +158,7 @@ public class AHDHNodeModel extends
 	 *            the four subregions
 	 * @return the relative density
 	 */
-	private List<Double> calculateRelativeDensity(
-			final List<IntervalView<BitType>> subregions) {
+	private List<Double> calculateRelativeDensity(final List<IntervalView<BitType>> subregions) {
 
 		final double[] pixels = new double[subregions.size()];
 		final double[] area = new double[subregions.size()];
@@ -203,8 +197,7 @@ public class AHDHNodeModel extends
 	 *            the four subregions
 	 * @return the relative density
 	 */
-	private List<Double> calculateDensity(
-			final List<IntervalView<BitType>> subregions) {
+	private List<Double> calculateDensity(final List<IntervalView<BitType>> subregions) {
 		final double[] pixels = new double[subregions.size()];
 		double sumPixels = 0;
 
@@ -241,26 +234,22 @@ public class AHDHNodeModel extends
 	 *            the y value of the centroid
 	 * @return the four subregions
 	 */
-	private List<IntervalView<BitType>> getSubRegions(
-			final IntervalView<BitType> region, final long cx, final long cy) {
+	private List<IntervalView<BitType>> getSubRegions(final IntervalView<BitType> region, final long cx,
+			final long cy) {
 
 		final List<IntervalView<BitType>> subregions = new ArrayList<>();
 
 		// top left
-		subregions.add(Views.interval(region, new long[] { region.min(0),
-				region.min(1) }, new long[] { cx, cy }));
+		subregions.add(Views.interval(region, new long[] { region.min(0), region.min(1) }, new long[] { cx, cy }));
 
 		// top right
-		subregions.add(Views.interval(region, new long[] { cx, region.min(1) },
-				new long[] { region.max(0), cy }));
+		subregions.add(Views.interval(region, new long[] { cx, region.min(1) }, new long[] { region.max(0), cy }));
 
 		// bottom left
-		subregions.add(Views.interval(region, new long[] { region.min(0), cy },
-				new long[] { cx, region.max(1) }));
+		subregions.add(Views.interval(region, new long[] { region.min(0), cy }, new long[] { cx, region.max(1) }));
 
 		// bottom right
-		subregions.add(Views.interval(region, new long[] { cx, cy },
-				new long[] { region.max(0), region.max(1) }));
+		subregions.add(Views.interval(region, new long[] { cx, cy }, new long[] { region.max(0), region.max(1) }));
 
 		return subregions;
 	}
@@ -290,8 +279,7 @@ public class AHDHNodeModel extends
 
 		// if a region is empty use the default centroid
 		if (sum == 0) {
-			return new double[] {
-					region.min(0) + ((region.max(0) - region.min(0)) / 2),
+			return new double[] { region.min(0) + ((region.max(0) - region.min(0)) / 2),
 					region.min(1) + ((region.max(1) - region.min(1)) / 2) };
 		}
 

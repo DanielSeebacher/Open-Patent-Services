@@ -1,8 +1,10 @@
-package org.knime.knip.patents.util;
+package org.knime.knip.patents.util.nodes;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -14,14 +16,15 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
 import org.knime.core.data.StringValue;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
-import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
-import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.knip.base.node.ValueToCellsNodeModel;
+import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -32,45 +35,25 @@ import org.xml.sax.SAXException;
  * @author Daniel Seebacher, University of Konstanz
  * 
  */
-public abstract class AbstractOPSModel extends
+public abstract class AbstractOPSNodeModel extends
 		ValueToCellsNodeModel<StringValue> {
 
 	private static final NodeLogger LOGGER = NodeLogger
-			.getLogger(AbstractOPSModel.class);
+			.getLogger(AbstractOPSNodeModel.class);
+	
+	private final XPath xpath;
 
-	/**
-	 * 
-	 * @return throttle control model
-	 */
-	public static SettingsModelBoolean createUseThrottleControlModel() {
-		return new SettingsModelBoolean("m_useThrottleControl", true);
+	public AbstractOPSNodeModel() {
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		this.xpath = xPathfactory.newXPath();
 	}
-
+	
 	/**
-	 * 
-	 * @return consumer key model
+	 * Override this method if you need additional SettingsModel in subclasses
 	 */
-	public static SettingsModelString createConsumerKeyModel() {
-		return new SettingsModelString("m_consumerKey", "");
-	}
-
-	/**
-	 * 
-	 * @return consumer secret model
-	 */
-	public static SettingsModelString createConsumerSecretModel() {
-		return new SettingsModelString("m_consumerSecret", "");
-	}
-
-	protected final SettingsModelBoolean m_useThrottleControl = createUseThrottleControlModel();
-	protected final SettingsModelString m_consumerKey = createConsumerKeyModel();
-	protected final SettingsModelString m_consumerSecret = createConsumerSecretModel();
-
 	@Override
 	protected void addSettingsModels(List<SettingsModel> settingsModels) {
-		settingsModels.add(m_useThrottleControl);
-		settingsModels.add(m_consumerKey);
-		settingsModels.add(m_consumerSecret);
+		// 
 	}
 
 	/**
@@ -124,23 +107,23 @@ public abstract class AbstractOPSModel extends
 	protected void throttle(HttpURLConnection connection, String field)
 			throws InterruptedException {
 
-		if (!m_useThrottleControl.getBooleanValue()) {
+		if (!KNIMEOPSPlugin.isThrottlingEnabled()) {
 			return;
 		}
 
 		String serverStatus = "unknown";
 		int serviceLimit = 0;
-
+		
 		try {
 			String throttleControl = connection
-					.getHeaderField("X-Throttling-Control");
+					.getHeaderField("X-Throttling-Control");			
 			serverStatus = throttleControl.split(" ")[0];
 
 			serviceLimit = Integer
 					.parseInt(throttleControl.split(field + "=")[1].split(":")[1]
 							.split("[^\\d]")[0]);
 		} catch (Exception e) {
-			serviceLimit = 5;
+			serviceLimit = 20;
 			LOGGER.warn(
 					"Couldn't retrieve server status, sleep for a few seconds. "
 							+ e.getMessage(), e);
@@ -184,5 +167,11 @@ public abstract class AbstractOPSModel extends
 					+ ", " + responseMessage + "]" + "\n Respone: \n"
 					+ parseErrorMessage(connection));
 		}
+	}
+
+	public abstract URL getURL(String... input) throws MalformedURLException;
+	
+	protected XPath getXPath(){
+		return xpath;
 	}
 }

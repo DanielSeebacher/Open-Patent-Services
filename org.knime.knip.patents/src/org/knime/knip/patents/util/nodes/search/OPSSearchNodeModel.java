@@ -20,16 +20,16 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.defaultnodesettings.SettingsModel;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.util.Pair;
-import org.knime.knip.patents.util.AbstractOPSModel;
+import org.knime.knip.patents.KNIMEOPSPlugin;
 import org.knime.knip.patents.util.AccessTokenGenerator;
+import org.knime.knip.patents.util.nodes.AbstractOPSNodeModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class OPSSearchNodeModel extends AbstractOPSModel {
+public class OPSSearchNodeModel extends AbstractOPSNodeModel {
 
-	private static final NodeLogger LOGGER = NodeLogger
-			.getLogger(OPSSearchNodeModel.class);
+	private static final NodeLogger LOGGER = NodeLogger.getLogger(OPSSearchNodeModel.class);
 	private static final int MAX_ALLOWED_PER_REQUEST = 100;
 
 	static SettingsModelIntegerBounded createStartRangeModel() {
@@ -55,80 +55,63 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 	protected DataCell[] compute(StringValue queryValue) throws Exception {
 		try {
 			// check if we need to get an access token
-			String consumerKey = m_consumerKey.getStringValue();
-			String consumerSecret = m_consumerSecret.getStringValue();
+			String consumerKey = KNIMEOPSPlugin.getOAuth2ConsumerKey();
+			String consumerSecret = KNIMEOPSPlugin.getOAuth2ConsumerSecret();
 
 			String accessToken = null;
 
 			int maxRange = m_endRange.getIntValue();
 
 			List<Patent> patentsList = new ArrayList<>();
-			for (int fromRange = m_startRange.getIntValue(); fromRange < maxRange; fromRange += MAX_ALLOWED_PER_REQUEST) {
+			for (int fromRange = m_startRange
+					.getIntValue(); fromRange < maxRange; fromRange += MAX_ALLOWED_PER_REQUEST) {
 				// build search url
-				URL queryURL = getQueryURL(queryValue.getStringValue());
+				URL queryURL = getURL(queryValue.getStringValue());
 
-				HttpURLConnection searchHttpConnection = (HttpURLConnection) queryURL
-						.openConnection();
+				HttpURLConnection searchHttpConnection = (HttpURLConnection) queryURL.openConnection();
 
-				searchHttpConnection.setRequestProperty(
-						"X-OPS-Range",
-						fromRange
-								+ "-"
-								+ Math.min(maxRange, (fromRange
-										+ MAX_ALLOWED_PER_REQUEST - 1)));
+				searchHttpConnection.setRequestProperty("X-OPS-Range",
+						fromRange + "-" + Math.min(maxRange, (fromRange + MAX_ALLOWED_PER_REQUEST - 1)));
 
 				if (consumerKey.length() > 0 && consumerSecret.length() > 0) {
-					accessToken = AccessTokenGenerator.getInstance()
-							.getAccessToken(consumerKey, consumerSecret);
+					accessToken = AccessTokenGenerator.getInstance().getAccessToken(consumerKey, consumerSecret);
 				}
 
 				// set accesstoken if available
 				if (accessToken != null) {
-					searchHttpConnection.setRequestProperty("Authorization",
-							"Bearer " + accessToken);
+					searchHttpConnection.setRequestProperty("Authorization", "Bearer " + accessToken);
 				}
 
 				// check html respone
 				try {
 					checkResponse(searchHttpConnection);
 				} catch (Exception e) {
-					LOGGER.warn(
-							"Server returned error before parsing: "
-									+ e.getMessage(), e);
+					LOGGER.warn("Server returned error before parsing: " + e.getMessage(), e);
 					return new DataCell[] { new MissingCell(e.getMessage()) };
 				}
 
 				throttle(searchHttpConnection, "search");
 
 				// download doc
-				DocumentBuilderFactory dbf = DocumentBuilderFactory
-						.newInstance();
+				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				Document doc = db.parse(searchHttpConnection.getInputStream());
 
-				Element biblioSearchElement = (Element) doc
-						.getElementsByTagName("ops:biblio-search").item(0);
-				maxRange = Math.min(Integer.parseInt(biblioSearchElement
-						.getAttribute("total-result-count")), m_endRange
-						.getIntValue());
+				Element biblioSearchElement = (Element) doc.getElementsByTagName("ops:biblio-search").item(0);
+				maxRange = Math.min(Integer.parseInt(biblioSearchElement.getAttribute("total-result-count")),
+						m_endRange.getIntValue());
 
-				NodeList patentsNodeList = doc
-						.getElementsByTagName("document-id");
+				NodeList patentsNodeList = doc.getElementsByTagName("document-id");
 				for (int i = 0; i < patentsNodeList.getLength(); i++) {
 					Element patent = (Element) patentsNodeList.item(i);
 
-					if (!patent.getAttribute("document-id-type")
-							.equals("docdb")) {
+					if (!patent.getAttribute("document-id-type").equals("docdb")) {
 						continue;
 					}
 
-					String country = patent.getElementsByTagName("country")
-							.item(0).getTextContent();
-					String docnumber = patent
-							.getElementsByTagName("doc-number").item(0)
-							.getTextContent();
-					String kind = patent.getElementsByTagName("kind").item(0)
-							.getTextContent();
+					String country = patent.getElementsByTagName("country").item(0).getTextContent();
+					String docnumber = patent.getElementsByTagName("doc-number").item(0).getTextContent();
+					String kind = patent.getElementsByTagName("kind").item(0).getTextContent();
 
 					patentsList.add(new Patent(country, docnumber, kind));
 				}
@@ -136,8 +119,7 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 
 			List<StringCell> cells = new ArrayList<>();
 			for (Patent patent : patentsList) {
-				cells.add(new StringCell(patent.getCountry() + "."
-						+ patent.getDocnumber() + "." + patent.getKind()));
+				cells.add(new StringCell(patent.getCountry() + "." + patent.getDocnumber() + "." + patent.getKind()));
 			}
 			return new DataCell[] { CollectionCellFactory.createListCell(cells) };
 
@@ -147,17 +129,15 @@ public class OPSSearchNodeModel extends AbstractOPSModel {
 
 	}
 
-	private URL getQueryURL(String query) throws MalformedURLException {
-		return new URL(
-				"http://ops.epo.org/3.1/rest-services/published-data/search?q="
-						+ query);
+	@Override
+	public URL getURL(String... input) throws MalformedURLException {
+		return new URL("http://ops.epo.org/3.1/rest-services/published-data/search?q=" + input[0]);
 	}
 
 	@Override
 	protected Pair<DataType[], String[]> getDataOutTypeAndName() {
 
-		DataType[] datatypes = new DataType[] { ListCell
-				.getCollectionType(StringCell.TYPE) };
+		DataType[] datatypes = new DataType[] { ListCell.getCollectionType(StringCell.TYPE) };
 		String[] columnNames = new String[] { "Patent ID" };
 
 		return new Pair<DataType[], String[]>(datatypes, columnNames);

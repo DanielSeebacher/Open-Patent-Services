@@ -6,28 +6,20 @@
 
 <!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
 <knimeNode icon="../logo.png" type="Manipulator">
-	<name>OPS Search</name>
-	<shortDescription>Search for patents.</shortDescription>
+	<name>OPS Description</name>
+	<shortDescription>Download the description of a patent.</shortDescription>
 
 	<fullDescription>
 		<intro>
-			Uses the ops.epo.org service to search for patents, given a
-			valid query. Supports OAuth2
-			authentication, if the
-			user has a valid
-			consumer key and consumer secret.
+			Uses the ops.epo.org service to download the description of a
+			patent, given its country/docnumber/kind code. Supports OAuth2
+			authentication, if the user has a valid consumer key and consumer
+			secret.
 		</intro>
-
 		<tab name="Options">
-			<option name="Consumer Key">
-				Consumer Key used for OAuth2 Authentication.
-			</option>
-			<option name="Consumer Secret">
-				Consumer Secret used for OAuth2 Authentication.
-			</option>
-
-			<option name="Query">
-				The search query.
+			<option name="Patent ID">
+				The Patent ID consisting of Country.DocNumber.Kind
+				(docdb format).
 			</option>
 		</tab>
 	</fullDescription>
@@ -36,9 +28,8 @@
 		<inPort index="0" name="Patents">
 			Patents
 		</inPort>
-		<outPort index="0" name="PatentÍDS">
-			The IDS of all patents found by the
-			given query.
+		<outPort index="0" name="Description">
+			The description of the patents.
 		</outPort>
 	</ports>
 </knimeNode>
